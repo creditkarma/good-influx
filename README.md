@@ -2,6 +2,7 @@
 
 InfluxDB broadcasting for Good process monitor, based on [good-http](https://github.com/hapijs/good-http).
 
+![Current Version](https://img.shields.io/npm/v/good-influx.svg)
 
 ## Usage
 
