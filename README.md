@@ -4,9 +4,53 @@ InfluxDB broadcasting for Good process monitor, based on [good-http](https://git
 
 ![Current Version](https://img.shields.io/npm/v/good-influx.svg)
 
+
 ## Usage
 
 `good-influx` is a write stream use to send event to remote endpoints in batches. It makes a "POST" request with a plain-text payload to the supplied `endpoint`. It will make a final "POST" request to the endpoint to flush the rest of the data on "finish".
+
+### Example
+
+```javascript
+const Hapi = require('hapi');
+const server = new Hapi.Server();
+server.connection();
+
+const options = {
+	ops: {
+	    interval: 1000
+	},
+    reporters: {
+    	// Send only 'ops' events to InfluxDB
+        influx: [{
+            module: 'good-squeeze',
+            name: 'Squeeze',
+            args: [{ ops: '*' }]
+        }, {
+            module: 'good-influx',
+            args: ['http://localhost:8086/write?db=good', {
+            	threshold: 10
+        	}]
+        }]
+    }
+};
+
+server.register({
+    register: require('good'),
+    options: options
+}, (err) => {
+
+    if (err) {
+        console.error(err);
+    } else {
+        server.start(() => {
+
+            console.info('Server started at ' + server.info.uri);
+        });
+    }
+});
+```
+
 
 ## Good Influx
 ### GoodInflux (endpoint, config)
