@@ -51,7 +51,7 @@ const mocks = {
         return `http://${address.address}:${address.port}`
     },
 
-    server(serverOptions) {
+    getServer(done) {
 
         const server = Http.createServer((req, res) => {
             let data = ''
@@ -66,11 +66,9 @@ const mocks = {
                 dataRows.forEach((datum) => {
                     expect(datum).to.equal('ops,host=mytesthost,pid=9876 os.cpu1m=1.8408203125,os.cpu5m=1.44287109375,os.cpu15m=1.15234375,os.freemem=162570240i,os.totalmem=6089818112i,os.uptime=11546i,proc.delay=0.07090700045228004,proc.heapTotal=41546080i,proc.heapUsed=27708712i,proc.rss=55812096i,proc.uptime=18.192,alec="superCoolDude" 123456789000000')
                 })
-
+                const a = 3
                 res.end()
-                // server.close(() => {
-                //     return true
-                // })
+                server.close(done)
             })
         })
 
@@ -81,7 +79,7 @@ const mocks = {
 describe('GoodInflux', () => {
     it('Sends events in a stream', (done) => {
 
-        const server = mocks.server({done: done})
+        const server = mocks.getServer(done)
 
         const stream = mocks.readStream()
 
