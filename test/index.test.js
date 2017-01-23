@@ -68,7 +68,7 @@ const mocks = {
 
                 dataRows.forEach((datum) => {
                     /* eslint max-len: ["error", 880, 4] */
-                    expect(datum).to.equal('ops,host=mytesthost,pid=9876 os.cpu1m=1.8408203125,os.cpu5m=1.44287109375,os.cpu15m=1.15234375,os.freemem=162570240i,os.totalmem=6089818112i,os.uptime=11546i,proc.delay=0.07090700045228004,proc.heapTotal=41546080i,proc.heapUsed=27708712i,proc.rss=55812096i,proc.uptime=18.192,alec="superCoolDude" 123456789000000')
+                    expect(datum).to.equal('ops,host=mytesthost,pid=9876 os.cpu1m=1.8408203125,os.cpu5m=1.44287109375,os.cpu15m=1.15234375,os.freemem=162570240i,os.totalmem=6089818112i,os.uptime=11546i,proc.delay=0.07090700045228004,proc.heapTotal=41546080i,proc.heapUsed=27708712i,proc.rss=55812096i,proc.uptime=18.192,testing="superClutch" 123456789000000')
                 })
 
                 res.end()
@@ -89,7 +89,7 @@ describe('GoodInflux', () => {
         server.listen(0, '127.0.0.1', () => {
             const reporter = new GoodInflux(mocks.getUri(server), {
                 threshold: 5,
-                metadata: { alec: 'superCoolDude' }
+                metadata: { testing: 'superClutch' }
             })
 
             stream.pipe(reporter)
