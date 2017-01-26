@@ -1,6 +1,6 @@
 'use strict'
 
-const GoodInflux = require('../lib/index')
+const GoodInflux = require('../lib/influx-http')
 
 const Stream = require('stream')
 const Http = require('http')
@@ -80,7 +80,7 @@ const mocks = {
     }
 }
 
-describe('GoodInflux', () => {
+describe('InfluxHttp', () => {
     it('Sends events in a stream', (done) => {
         const server = mocks.getServer(done)
 
