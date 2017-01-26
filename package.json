@@ -11,7 +11,7 @@
   "author": "Frederic Hemberger (https://frederic-hemberger.de/)",
   "license": "MIT",
   "dependencies": {
-    "fast-safe-stringify": "1.0.9",
+    "fast-safe-stringify": "^1.0.9",
     "good-http": "6.x.x",
     "hoek": "4.x.x",
     "wreck": "7.x.x"

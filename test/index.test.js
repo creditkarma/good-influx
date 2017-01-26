@@ -67,7 +67,7 @@ const mocks = {
             })
             req.on('end', () => {
                 const dataRows = data.split('\n')
-                expect(dataRows.length).to.be.greaterThan(1)
+                expect(dataRows.length).to.equal(5)
 
                 dataRows.forEach((datum) => {
                     expect(datum).to.equal(expectedMessage)
@@ -84,7 +84,11 @@ const mocks = {
     getUdpServer(done) {
         const server = Dgram.createSocket('udp4')
         server.on('message', (msg) => {
-            expect(msg).to.equal(expectedMessage)
+            const splitMessage = msg.toString().split('\n')
+            expect(splitMessage.length).to.equal(5)
+            splitMessage.forEach((msgRow) => {
+                expect(msgRow).to.equal(expectedMessage)
+            })
             server.close(done)
         })
         server.bind(9876, '127.0.0.1')
