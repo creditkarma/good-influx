@@ -1,6 +1,7 @@
 # good-influx
 
 [InfluxDB](https://docs.influxdata.com/) broadcasting for Good process monitor, based on [good-http](https://github.com/hapijs/good-http).
+It can write to HTTP or UDP Telegraf endpoints.
 
 ![Current Version](https://img.shields.io/npm/v/good-influx.svg)
 
@@ -8,7 +9,9 @@
 
 ## Usage
 
-`good-influx` is a write stream used to send events to InfluxDB endpoints in batches. It makes a "POST" request with a plain-text payload to the supplied `endpoint`. It will make a final "POST" request to the endpoint to flush the rest of the data on "finish".
+`good-influx` is a write stream used to send events to InfluxDB endpoints in batches. If your `endpoint` is `http://` or `https://`, it makes a "POST" request with a plain-text payload to the supplied `endpoint`. It will make a final "POST" request to the endpoint to flush the rest of the data on "finish".
+
+If the supplied `endpoint` is a `udp://` endpoint then `good-influx` will send the stats via UDP.  This may improve application performance since UDP does not wait for a response.  Though it does fail silently, so you run the risk that your stats are failing to record and you don't know about it.
 
 ### Example
 
@@ -48,7 +51,6 @@ server.register({
         console.error(err);
     } else {
         server.start(() => {
-
             console.info('Server started at ' + server.info.uri);
         });
     }
@@ -63,8 +65,10 @@ Creates a new GoodInflux object where:
 
 - `endpoint` - full path to remote server's InfluxDB HTTP API end point to transmit InfluxDB statistics (e.g. `http://localhost:8086/write?db=good`)
 - `config` - configuration object *(Optional)*
-	- `[threshold]` - number of events to hold before transmission. Defaults to `20`. Set to `0` to have every event start transmission instantly. It is strongly suggested to have a set threshold to make data transmission more efficient.
+  - `[threshold]` - number of events to hold before transmission. Defaults to `20`. Set to `0` to have every event start transmission instantly. It is recommended to have a set threshold to make data transmission more efficient.
+  - `[errorThreshold]` - number of erroring message sends to tolerate before the plugin fails.  Default is 0.
   - `[wreck]` - configuration object to pass into [`wreck`](https://github.com/hapijs/wreck#advanced). Defaults to `{ timeout: 60000, headers: {} }`. `content-type` is always "text/plain".
+  - `[udpType]` - UDP type; defaults to `udp4`. Probably not necessary to change, but more documentation is available on the [NodeJS Dgram Documentation](https://nodejs.org/api/dgram.html#dgram_dgram_createsocket_type_callback)
   - `[metadata]` - arbitrary information you would like to include in your InfluxDB stats.  This helps you query InfluxDB for the statistics you want.
 
 ## Series
@@ -81,12 +85,12 @@ time | host | pid | data | tags
 
 ### Ops
 
-time | host | pid | os | proc | <metadata>
+time | host | pid | os | proc | metadata _(optional)_
 -----|------|-----|----|------|-----------
 
 - os includes: `cpu1m`, `cpu5m`, `cpu15m`, `freemem`, `totalmem` and `uptime`
 - proc includes: `delay`, `heapTotal`, `heapUsed`, `rss` and `uptime`
-- <metadata> includes any decorators you may have added as part of the `metadata` config option above.
+- metadata _(optional)_ includes any decorators you may have added as part of the `metadata` config option above.
 
 ### Request
 

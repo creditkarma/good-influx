@@ -1,6 +1,6 @@
 {
   "name": "@creditkarma/good-influx",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "repository": "git://github.com/fhemberger/good-influx",
   "description": "InfluxDB broadcasting for Good process monitor",
   "main": "lib/index.js",
@@ -11,8 +11,9 @@
   "author": "Frederic Hemberger (https://frederic-hemberger.de/)",
   "license": "MIT",
   "dependencies": {
-    "fast-safe-stringify": "1.0.9",
-    "good-http": "6.x.x",
+    "fast-safe-stringify": "^1.0.9",
+    "good-http": "^6.1.2",
+    "good-udp": "^4.0.0",
     "hoek": "4.x.x",
     "wreck": "7.x.x"
   },
