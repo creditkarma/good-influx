@@ -1,6 +1,6 @@
 'use strict'
 
-const GoodInflux = require('../lib/influx-http')
+const GoodInflux = require('../lib/index')
 
 const Stream = require('stream')
 const Http = require('http')
