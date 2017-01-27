@@ -59,6 +59,7 @@ const mocks = {
     },
 
     getHttpServer(done) {
+        let hitCount = 0
         const server = Http.createServer((req, res) => {
             let data = ''
 
@@ -66,6 +67,7 @@ const mocks = {
                 data += chunk
             })
             req.on('end', () => {
+                hitCount += 1
                 const dataRows = data.split('\n')
                 expect(dataRows.length).to.equal(5)
 
@@ -74,7 +76,9 @@ const mocks = {
                 })
 
                 res.end()
-                server.close(done)
+                if (hitCount >= 2) {
+                    server.close(done)
+                }
             })
         })
 
@@ -82,14 +86,18 @@ const mocks = {
     },
 
     getUdpServer(done) {
+        let hitCount = 0
         const server = Dgram.createSocket('udp4')
         server.on('message', (msg) => {
+            hitCount += 1
             const splitMessage = msg.toString().split('\n')
             expect(splitMessage.length).to.equal(5)
             splitMessage.forEach((msgRow) => {
                 expect(msgRow).to.equal(expectedMessage)
             })
-            server.close(done)
+            if (hitCount >= 2) {
+                server.close(done)
+            }
         })
         server.bind(9876, '127.0.0.1')
         return server
@@ -99,7 +107,6 @@ const mocks = {
 describe('GoodInflux', () => {
     it('Http URL => Sends events in a stream to HTTP server', (done) => {
         const server = mocks.getHttpServer(done)
-
         const stream = mocks.readStream()
 
         server.listen(0, '127.0.0.1', () => {
@@ -110,7 +117,9 @@ describe('GoodInflux', () => {
 
             stream.pipe(reporter)
 
-            for (let i = 0; i < 5; i += 1) {
+            // Important to send 10 events. Threshold is 5, so two batches of events are sent.
+            // Sending two batches proves that the callback is being passed properly, in _sendViaHttp()
+            for (let i = 0; i < 10; i += 1) {
                 stream.push(testEvent)
             }
         })
@@ -128,7 +137,9 @@ describe('GoodInflux', () => {
 
             stream.pipe(reporter)
 
-            for (let i = 0; i < 5; i += 1) {
+            // Important to send 10 events. Threshold is 5, so two batches of events are sent.
+            // Sending two batches proves that the callback is being passed properly, in _sendViaUdp()
+            for (let i = 0; i < 10; i += 1) {
                 stream.push(testEvent)
             }
         })
