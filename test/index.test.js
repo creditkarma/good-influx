@@ -69,8 +69,9 @@ const mocks = {
             req.on('end', () => {
                 hitCount += 1
                 const dataRows = data.split('\n')
-                expect(dataRows.length).to.equal(5)
 
+                // Because threshold is 5, expect 5 events to be sent at a time
+                expect(dataRows.length).to.equal(5)
                 dataRows.forEach((datum) => {
                     expect(datum).to.equal(expectedMessage)
                 })
@@ -91,6 +92,8 @@ const mocks = {
         server.on('message', (msg) => {
             hitCount += 1
             const splitMessage = msg.toString().split('\n')
+
+            // Because threshold is 5, expect 5 events to be sent at a time
             expect(splitMessage.length).to.equal(5)
             splitMessage.forEach((msgRow) => {
                 expect(msgRow).to.equal(expectedMessage)
@@ -118,7 +121,7 @@ describe('GoodInflux', () => {
             stream.pipe(reporter)
 
             // Important to send 10 events. Threshold is 5, so two batches of events are sent.
-            // Sending two batches proves that the callback is being passed properly, in _sendViaHttp()
+            // Sending two batches proves that the callback is being passed properly to Wreck.request.
             for (let i = 0; i < 10; i += 1) {
                 stream.push(testEvent)
             }
@@ -138,7 +141,7 @@ describe('GoodInflux', () => {
             stream.pipe(reporter)
 
             // Important to send 10 events. Threshold is 5, so two batches of events are sent.
-            // Sending two batches proves that the callback is being passed properly, in _sendViaUdp()
+            // Sending two batches proves that the callback is being passed properly to this._udpClient.send.
             for (let i = 0; i < 10; i += 1) {
                 stream.push(testEvent)
             }
