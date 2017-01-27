@@ -144,4 +144,11 @@ describe('GoodInflux', () => {
             }
         })
     })
+
+    it('Unsupported protocol => throw error', (done) => {
+        expect(() => {
+            return new GoodInflux('ftp://abcd:1234', {})
+        }).to.throw(Error, 'Unsupported protocol ftp:. Supported protocols are udp, http or https')
+        done()
+    })
 })
