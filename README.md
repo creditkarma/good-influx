@@ -20,7 +20,7 @@ const Hapi = require('hapi');
 const server = new Hapi.Server();
 server.connection();
 
-const goodOptions = {
+const options = {
 	ops: {
 	    interval: 10000
 	},
@@ -44,7 +44,7 @@ const goodOptions = {
 
 server.register({
     register: require('good'),
-    options: goodOptions
+    options: options
 }, (err) => {
 
     if (err) {
