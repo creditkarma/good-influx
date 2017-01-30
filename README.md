@@ -22,7 +22,7 @@ server.connection();
 
 const options = {
 	ops: {
-	    interval: 10000
+	    interval: 1000
 	},
     reporters: {
     	// Send only 'ops' events to InfluxDB
