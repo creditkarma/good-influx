@@ -1,14 +1,6 @@
 {
   "extends": "eslint-config-hapi",
   "rules": {
-    "spaced-comment": "off",
-    "hapi/hapi-scope-start": "off",
-    "indent": ["error", 4],
-    "space-before-function-paren": 0,
-    "semi": "off",
-    "padded-blocks": "off",
-    "key-spacing": "off",
-    "array-bracket-spacing": "off",
-    "brace-style": "off"
+    "hapi/hapi-scope-start": "off"
   }
 }
