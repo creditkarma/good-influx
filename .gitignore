@@ -1,4 +1,11 @@
-/node_modules
-.DS_Store
-coverage.html
+node_modules/*
+
+# Index files added by text editors and IDE's should be ignored.
+.idea
+.idea/*
+*.DS_Store
+
+# Not using npm v5 functionality just yet, may revisit in the future.
 package-lock.json
+coverage.html
+npm-debug.log
