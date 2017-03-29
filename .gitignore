@@ -1,3 +1,10 @@
-/node_modules
-.DS_Store
+node_modules/*
+
+# Index files added by text editors and IDE's should be ignored.
+# Feel free to add any such file here.
+.idea
+.idea/*
+*.DS_Store
+
 coverage.html
+npm-debug.log
