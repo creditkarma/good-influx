@@ -1,6 +1,3 @@
-node_modules/*
-
-.idea
-.idea/*
-
-npm-debug.log
+/node_modules
+.DS_Store
+coverage.html
