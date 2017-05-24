@@ -36,7 +36,8 @@ const options = {
             args: ['http://localhost:8086/write?db=good', {
                 threshold: 10,
                 metadata: {
-                    serviceName: 'SuperAwesomeService'
+                    serviceName: 'SuperAwesomeService',
+                    dataCenter: 'Banff'
                 }
         	}]
         }]
@@ -67,7 +68,7 @@ Creates a new GoodInflux object where:
 - `endpoint` - full path to remote server's InfluxDB HTTP API end point to transmit InfluxDB statistics (e.g. `http://localhost:8086/write?db=good`)
 - `config` - configuration object *(Optional)*
   - `[threshold]` - number of events to hold before transmission. Defaults to `5`. Set to `0` to have every event start transmission instantly.
-    - *Note that threshold above `5` will be set to `5`.  Why?  Because if UDP packets get too big they fail to transmit.*
+    - *Note that for UDP, threshold above `5` will be set to `5`.  Why?  Because if UDP packets get too big they fail to transmit.*
   - `[errorThreshold]` - number of erroring message sends to tolerate before the plugin fails.  Default is 0.
   - `[wreck]` - configuration object to pass into [`wreck`](https://github.com/hapijs/wreck#advanced). Defaults to `{ timeout: 60000, headers: {} }`. `content-type` is always "text/plain".
   - `[udpType]` - UDP type; defaults to `udp4`. Probably not necessary to change, but more documentation is available on the [NodeJS Dgram Documentation](https://nodejs.org/api/dgram.html#dgram_dgram_createsocket_type_callback)
@@ -92,25 +93,13 @@ Each Ops event from the Hapi Good plugin is separated out into 5 events for Infl
 
 _Standard tags: host,pid, metadata (optional)_
 
-event             | numEvents | tags     | fields                                   |
-------------------|-----------|----------|------------------------------------------|
-ops               | 1         |_Standard_| os.cpu1m,os.cpu5m,os.cpu15m,os.freemem,  |
-                  |           |          | os.totalmem,os.uptime,os.totalmem,       |
-                  |           |          | proc.delay,proc.heapTotal,proc.heapUsed, |
-                  |           |          | proc.rss,proc.uptime                     |
-------------------|-----------|----------|------------------------------------------|
-ops_requests      | 1 per     |_Standard_| requestsTotal,requestsDisconnects,       |
-                  | port      | + port   | requests200*                             |
-                  |           |          |   * One field for each status code       |
-------------------|-----------|----------|------------------------------------------|
-ops_concurrents   | 1 per     |_Standard_| concurrents                              |
-                  | port      | + port   |                                          |
-------------------|-----------|----------|------------------------------------------|
-ops_responseTimes | 1 per     |_Standard_| avg, max                                 |
-                  | port      | + port   |                                          |
-------------------|-----------|----------|------------------------------------------|
-ops_sockets       | 1         |_Standard_| httpTotal,httpsTotal                     |
-------------------|-----------|----------|------------------------------------------|
+event             | numEvents | tags       | fields
+------------------|-----------|------------|------------------------------------------
+ops               | 1         | _Standard_ | os.cpu1m,os.cpu5m,os.cpu15m,os.freemem,os.totalmem,os.uptime,os.totalmem,proc.delay,proc.heapTotal,proc.heapUsed,proc.rss,proc.uptime
+ops_requests      | 1 per port|_Standard_ + port| requestsTotal,requestsDisconnects,requests200* -- one field for each status code
+ops_concurrents   | 1 per port|_Standard_ + port| concurrents
+ops_responseTimes | 1 per port|_Standard_ + port| avg, max
+ops_sockets       | 1         |_Standard_| httpTotal,httpsTotal
 
 ### Request
 
