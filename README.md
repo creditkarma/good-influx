@@ -96,11 +96,11 @@ _Standard tags: host,pid, metadata (optional)_
 
 event             | numEvents | tags       | fields
 ------------------|-----------|------------|------------------------------------------
-ops               | 1         | _Standard_ | os.cpu1m,os.cpu5m,os.cpu15m,os.freemem,os.totalmem,os.uptime,os.totalmem,proc.delay,proc.heapTotal,proc.heapUsed,proc.rss,proc.uptime
-ops_requests      | 1 per port|_Standard_ + port| requestsTotal,requestsDisconnects,requests200* -- one field for each status code
+ops               | 1         | _Standard_ | os.cpu1m, os.cpu5m, os.cpu15m, os.freemem, os.totalmem, os.uptime, os.totalmem, proc.delay, proc.heapTotal, proc.heapUsed, proc.rss, proc.uptime
+ops_requests      | 1 per port|_Standard_ + port| requestsTotal, requestsDisconnects, requests200* -- one field for each status code
 ops_concurrents   | 1 per port|_Standard_ + port| concurrents
 ops_responseTimes | 1 per port|_Standard_ + port| avg, max
-ops_sockets       | 1         |_Standard_| httpTotal,httpsTotal
+ops_sockets       | 1         |_Standard_| httpTotal, httpsTotal
 
 ### Request
 
