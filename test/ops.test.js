@@ -61,7 +61,6 @@ const getExpectedMessage = (ports, metadata, responseTimesAvg, responseTimesMax)
     });
     const loadOpsSocketsEvents = [`ops_sockets,${eventHost} httpTotal=19,httpsTotal=49 1485996802647000000`];
 
-    // TODO: Flatten array instead.
     const finalOpsEvents = [
         loadOpsRequestsEvents,
         loadOpsConcurrentsEvents,
