@@ -2,6 +2,8 @@
 
 const GoodInflux = require('../lib/index');
 
+const Hoek = require('hoek');
+
 const Stream = require('stream');
 const Http = require('http');
 const Dgram = require('dgram');
@@ -43,7 +45,7 @@ const testEvent = {
     }
 };
 /* eslint max-len: ["error", 440, 4] */
-const expectedMessage = 'ops,host=mytesthost,pid=9876,testing="superClutch",version="1" os.cpu1m=1.8408203125,os.cpu5m=1.44287109375,os.cpu15m=1.15234375,os.freemem=162570240i,os.totalmem=6089818112i,os.uptime=11546i,proc.delay=0.07090700045228004,proc.heapTotal=41546080i,proc.heapUsed=27708712i,proc.rss=55812096i,proc.uptime=18.192 123456789000000';
+const expectedMessage = 'ops,host=mytesthost,pid=9876,testing="superClutch",version="0",name="" os.cpu1m=1.8408203125,os.cpu5m=1.44287109375,os.cpu15m=1.15234375,os.freemem=162570240i,os.totalmem=6089818112i,os.uptime=11546i,proc.delay=0.07090700045228004,proc.heapTotal=41546080i,proc.heapUsed=27708712i,proc.rss=55812096i,proc.uptime=18.192 123456789000000';
 const msgWithoutMetadata = 'ops,host=mytesthost,pid=9876 os.cpu1m=1.8408203125,os.cpu5m=1.44287109375,os.cpu15m=1.15234375,os.freemem=162570240i,os.totalmem=6089818112i,os.uptime=11546i,proc.delay=0.07090700045228004,proc.heapTotal=41546080i,proc.heapUsed=27708712i,proc.rss=55812096i,proc.uptime=18.192 123456789000000';
 
 const mocks = {
@@ -109,19 +111,22 @@ const mocks = {
     }
 };
 
+const Options = {
+    threshold: 5,
+    metadata: {
+        testing: 'superClutch',
+        version: 0,
+        name: ''
+    }
+};
+
 describe('GoodInflux', () => {
     it('Http URL => Sends events in a stream to HTTP server', (done) => {
         const server = mocks.getHttpServer(expectedMessage, done);
         const stream = mocks.readStream();
 
         server.listen(0, '127.0.0.1', () => {
-            const reporter = new GoodInflux(mocks.getUri(server, 'http'), {
-                threshold: 5,
-                metadata: {
-                    testing: 'superClutch',
-                    version: 1
-                }
-            });
+            const reporter = new GoodInflux(mocks.getUri(server, 'http'), Options);
 
             stream.pipe(reporter);
 
@@ -138,13 +143,7 @@ describe('GoodInflux', () => {
         const stream = mocks.readStream();
 
         server.on('listening', () => {
-            const reporter = new GoodInflux(mocks.getUri(server, 'udp'), {
-                threshold: 5,
-                metadata: {
-                    testing: 'superClutch',
-                    version: 1
-                }
-            });
+            const reporter = new GoodInflux(mocks.getUri(server, 'udp'), Options);
 
             stream.pipe(reporter);
 
@@ -163,7 +162,7 @@ describe('GoodInflux', () => {
         done();
     });
 
-    it('Ommit metadata when not defined', (done) => {
+    it('Omit metadata when not defined', (done) => {
         const server = mocks.getHttpServer(msgWithoutMetadata, done);
         const stream = mocks.readStream();
 
@@ -182,7 +181,7 @@ describe('GoodInflux', () => {
         });
     });
 
-    it('Ommit metadata when empty', (done) => {
+    it('Omit metadata when empty', (done) => {
         const server = mocks.getHttpServer(msgWithoutMetadata, done);
         const stream = mocks.readStream();
 
@@ -191,6 +190,27 @@ describe('GoodInflux', () => {
                 threshold: 5,
                 metadata: {}
             });
+
+            stream.pipe(reporter);
+
+            // Important to send 10 events. Threshold is 5, so two batches of events are sent.
+            // Sending two batches proves that the callback is being passed properly to Wreck.request.
+            for (let i = 0; i < 10; i += 1) {
+                stream.push(testEvent);
+            }
+        });
+    });
+
+    it('Omit undefined metadata', (done) => {
+        const server = mocks.getHttpServer(expectedMessage, done);
+        const stream = mocks.readStream();
+
+        const opts = Hoek.clone(Options);
+        opts.metadata.notDefined = undefined;
+        opts.metadata.isNull = null;
+
+        server.listen(0, '127.0.0.1', () => {
+            const reporter = new GoodInflux(mocks.getUri(server, 'http'), opts);
 
             stream.pipe(reporter);
 
