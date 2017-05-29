@@ -71,8 +71,6 @@ const expectedMessage = 'ops,host=mytesthost,pid=9876,testing="superClutch",vers
 const msgWithoutMetadata = 'ops,host=mytesthost,pid=9876 os.cpu1m=1.8408203125,os.cpu5m=1.44287109375,os.cpu15m=1.15234375,os.freemem=162570240i,os.totalmem=6089818112i,os.uptime=11546i,proc.delay=0.07090700045228004,proc.heapTotal=41546080i,proc.heapUsed=27708712i,proc.rss=55812096i,proc.uptime=18.192 123456789000000';
 
 /**
- * TODO: Find some way to make sure this has actually been hit
- *
  * Checking that the events sent to InfluxDB:
  *  1) Starts with "ops"
  *  2) Contains the custom metadata specified
@@ -81,12 +79,12 @@ const msgWithoutMetadata = 'ops,host=mytesthost,pid=9876 os.cpu1m=1.8408203125,o
  * testing is done in line-protocol.test.js.
  *
  * @param [String] responseData
+ * @param [Number] expectedEvents
  */
 const validateResponses = (responseData, expectedEvents) => {
     const expectedLength = expectedEvents || 25;
     const dataRows = responseData.split('\n');
-    // Because threshold is 5, expect 5 events to be sent at a time
-    // Since 5 influx events are emitted per ops event, expect length to equal 25
+
     expect(dataRows.length).to.equal(expectedLength);
     dataRows.forEach((datum) => {
         expect(datum).to.match(/^ops/);
