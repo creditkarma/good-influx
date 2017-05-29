@@ -64,8 +64,6 @@ const testEvent = {
 };
 
 /**
- * TODO: Find some way to make sure this has actually been hit
- *
  * Checking that the events sent to InfluxDB:
  *  1) Starts with "ops"
  *  2) Contains the custom metadata specified
@@ -74,12 +72,12 @@ const testEvent = {
  * testing is done in line-protocol.test.js.
  *
  * @param [String] responseData
+ * @param [Number] expectedEvents
  */
 const validateResponses = (responseData, expectedEvents) => {
     const expectedLength = expectedEvents || 25;
     const dataRows = responseData.split('\n');
-    // Because threshold is 5, expect 5 events to be sent at a time
-    // Since 5 influx events are emitted per ops event, expect length to equal 25
+
     expect(dataRows.length).to.equal(expectedLength);
     dataRows.forEach((datum) => {
         expect(datum).to.match(/^ops/);

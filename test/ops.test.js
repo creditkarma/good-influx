@@ -100,8 +100,6 @@ describe('ops all events', () => {
 });
 
 describe('ops_responseTimes avg max', () => {
-    // TODO: This was an important design decision.  If avg and max are not numbers
-    // then should their values be 0?  What does the team think?
     it('avg is null and max is string => avg and max shall be 0s', (done) => {
         const testEvent = JSON.parse(testOpsEventBase);
         testEvent.load.responseTimes['8080'].avg = null;
