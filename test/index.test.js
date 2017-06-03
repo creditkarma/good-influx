@@ -67,8 +67,10 @@ const testEvent = {
 };
 
 /* eslint max-len: ["error", 440, 4] */
-const expectedMessage = 'ops,host=mytesthost,pid=9876,testing="superClutch",version="0",name="" os.cpu1m=1.8408203125,os.cpu5m=1.44287109375,os.cpu15m=1.15234375,os.freemem=162570240i,os.totalmem=6089818112i,os.uptime=11546i,proc.delay=0.07090700045228004,proc.heapTotal=41546080i,proc.heapUsed=27708712i,proc.rss=55812096i,proc.uptime=18.192 123456789000000';
-const msgWithoutMetadata = 'ops,host=mytesthost,pid=9876 os.cpu1m=1.8408203125,os.cpu5m=1.44287109375,os.cpu15m=1.15234375,os.freemem=162570240i,os.totalmem=6089818112i,os.uptime=11546i,proc.delay=0.07090700045228004,proc.heapTotal=41546080i,proc.heapUsed=27708712i,proc.rss=55812096i,proc.uptime=18.192 123456789000000';
+// const msgWithMetadata = 'ops,host=mytesthost,pid=9876,testing="superClutch",version="0",name="" os.cpu1m=1.8408203125,os.cpu5m=1.44287109375,os.cpu15m=1.15234375,os.freemem=162570240i,os.totalmem=6089818112i,os.uptime=11546i,proc.delay=0.07090700045228004,proc.heapTotal=41546080i,proc.heapUsed=27708712i,proc.rss=55812096i,proc.uptime=18.192 123456789000000';
+const tagsWithMetadata = /host=mytesthost,pid=9876,testing="superClutch",version="0",name="" /
+// const tagsWithoutMetadata = 'ops,host=mytesthost,pid=9876 os.cpu1m=1.8408203125,os.cpu5m=1.44287109375,os.cpu15m=1.15234375,os.freemem=162570240i,os.totalmem=6089818112i,os.uptime=11546i,proc.delay=0.07090700045228004,proc.heapTotal=41546080i,proc.heapUsed=27708712i,proc.rss=55812096i,proc.uptime=18.192 123456789000000';
+const tagsWithoutMetadata = /host=mytesthost,pid=9876 /
 
 /**
  * Checking that the events sent to InfluxDB:
@@ -81,14 +83,14 @@ const msgWithoutMetadata = 'ops,host=mytesthost,pid=9876 os.cpu1m=1.8408203125,o
  * @param [String] responseData
  * @param [Number] expectedEvents
  */
-const validateResponses = (responseData, expectedEvents) => {
+const validateResponses = (responseData, expectedEvents, metadataRegex) => {
     const expectedLength = expectedEvents || 25;
     const dataRows = responseData.split('\n');
 
     expect(dataRows.length).to.equal(expectedLength);
     dataRows.forEach((datum) => {
-        expect(datum).to.match(/^ops/);
-        expect(datum).to.match(/testing="superClutch"/);
+        expect(datum).to.match(/^ops/)
+        expect(datum).to.match(metadataRegex);
     });
 };
 
@@ -115,7 +117,7 @@ const mocks = {
             });
             req.on('end', () => {
                 hitCount += 1;
-                validateResponses(data);
+                validateResponses(data, 25, expectedMsg);
 
                 res.end();
                 if (hitCount >= 2) {
@@ -127,12 +129,12 @@ const mocks = {
         return server;
     },
 
-    getUdpServer(expectedNumberOfEvents, done) {
+    getUdpServer(expectedNumberOfEvents, expectedMsg, done) {
         let hitCount = 0;
         const server = Dgram.createSocket('udp4');
         server.on('message', (msg) => {
             hitCount += 1;
-            validateResponses(msg.toString(), expectedNumberOfEvents);
+            validateResponses(msg.toString(), expectedNumberOfEvents, expectedMsg);
 
             if (hitCount >= 2) {
                 server.close(done);
@@ -155,7 +157,7 @@ const Options = {
 describe('GoodInflux', () => {
     describe('Http URL =>', () => {
         it('Sends events in a stream to HTTP server', (done) => {
-            const server = mocks.getHttpServer(done);
+            const server = mocks.getHttpServer(tagsWithMetadata, done);
             const stream = mocks.readStream();
 
             server.listen(0, '127.0.0.1', () => {
@@ -173,7 +175,7 @@ describe('GoodInflux', () => {
 
     describe('Udp URL =>', () => {
         it('Threshold not set => Sends 25 events in a stream to UDP server', (done) => {
-            const server = mocks.getUdpServer(25, done);
+            const server = mocks.getUdpServer(25, tagsWithMetadata, done);
             const stream = mocks.readStream();
 
             server.on('listening', () => {
@@ -190,7 +192,7 @@ describe('GoodInflux', () => {
         });
 
         it('Threshold of 3 => Sends 15 events in a stream to UDP server', (done) => {
-            const server = mocks.getUdpServer(15, done);
+            const server = mocks.getUdpServer(15, tagsWithMetadata, done);
             const stream = mocks.readStream();
 
             server.on('listening', () => {
@@ -210,7 +212,7 @@ describe('GoodInflux', () => {
         });
 
         it('Threshold of 13 => Sends 25 events in a stream to UDP server', (done) => {
-            const server = mocks.getUdpServer(25, done);
+            const server = mocks.getUdpServer(25, tagsWithMetadata, done);
             const stream = mocks.readStream();
 
             server.on('listening', () => {
@@ -238,7 +240,7 @@ describe('GoodInflux', () => {
     });
 
     it('Omit metadata when not defined', (done) => {
-        const server = mocks.getHttpServer(msgWithoutMetadata, done);
+        const server = mocks.getHttpServer(tagsWithoutMetadata, done);
         const stream = mocks.readStream();
 
         server.listen(0, '127.0.0.1', () => {
@@ -257,7 +259,7 @@ describe('GoodInflux', () => {
     });
 
     it('Omit metadata when empty', (done) => {
-        const server = mocks.getHttpServer(msgWithoutMetadata, done);
+        const server = mocks.getHttpServer(tagsWithoutMetadata, done);
         const stream = mocks.readStream();
 
         server.listen(0, '127.0.0.1', () => {
@@ -277,7 +279,7 @@ describe('GoodInflux', () => {
     });
 
     it('Omit undefined metadata', (done) => {
-        const server = mocks.getHttpServer(expectedMessage, done);
+        const server = mocks.getHttpServer(tagsWithMetadata, done);
         const stream = mocks.readStream();
 
         const opts = Hoek.clone(Options);
