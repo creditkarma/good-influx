@@ -102,3 +102,15 @@ describe('error', () => {
         done();
     });
 });
+
+describe('Unrecognized event', () => {
+    it('LineProtocol simply returns', (done) => {
+        const testEvent = {
+            event: 'hello',
+            host: 'mytesthost',
+            timestamp: 1485996802647
+        };
+        expect(LineProtocol.format(testEvent, {})).to.equal(undefined);
+        done();
+    });
+});
