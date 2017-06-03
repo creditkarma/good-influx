@@ -73,7 +73,6 @@ Creates a new GoodInflux object where:
   - `[wreck]` - configuration object to pass into [`wreck`](https://github.com/hapijs/wreck#advanced). Defaults to `{ timeout: 60000, headers: {} }`. `content-type` is always "text/plain".
   - `[udpType]` - UDP type; defaults to `udp4`. Probably not necessary to change, but more documentation is available on the [NodeJS Dgram Documentation](https://nodejs.org/api/dgram.html#dgram_dgram_createsocket_type_callback)
   - `[metadata]` - arbitrary information you would like to add to your InfluxDB stats.  This helps you query InfluxDB for the statistics you want.
-    - *Note: Currently added to the fields, which is not really a correct usage of InfluxDB. We may move this info to the tags in a future release.*
 
 ## Series
 
