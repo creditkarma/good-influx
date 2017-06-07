@@ -106,7 +106,7 @@ const Options = {
 };
 
 describe('GoodInflux', () => {
-    describe('Http URL =>', () => {
+    describe('HTTP URL =>', () => {
         it('Sends events in a stream to HTTP server', (done) => {
             const server = mocks.getHttpServer(msgWithMetadata, done);
             const stream = mocks.readStream();
@@ -124,7 +124,7 @@ describe('GoodInflux', () => {
         });
     });
 
-    describe('Udp URL =>', () => {
+    describe('UDP URL =>', () => {
         it('Threshold not set => Sends 5 events in a stream to UDP server', (done) => {
             const server = mocks.getUdpServer(5, msgWithMetadata, done);
             const stream = mocks.readStream();
