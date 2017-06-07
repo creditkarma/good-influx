@@ -1,5 +1,7 @@
 # good-influx
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/fhemberger/good-influx.svg)](https://greenkeeper.io/)
+
 [InfluxDB](https://docs.influxdata.com/) broadcasting for Good process monitor, based on [good-http](https://github.com/hapijs/good-http).
 It can write to HTTP or UDP Telegraf endpoints.
 
