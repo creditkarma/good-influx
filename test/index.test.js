@@ -25,7 +25,7 @@ const testEvent = {
     pid: 1234
 };
 
-const msgWithMetadata = 'log,host=mytesthost,pid=1234,testing="superClutch",version="0",name="" data="Things are good",tags="info,request" 1485996802647000000';
+const msgWithMetadata = 'log,host=mytesthost,pid=1234,testing=superClutch,version=0 data="Things are good",tags="info,request" 1485996802647000000';
 const msgWithoutMetadata = 'log,host=mytesthost,pid=1234 data="Things are good",tags="info,request" 1485996802647000000';
 
 /**
@@ -101,6 +101,7 @@ const Options = {
     metadata: {
         testing: 'superClutch',
         version: 0,
+        // TODO: What to do about empty strings?
         name: ''
     }
 };

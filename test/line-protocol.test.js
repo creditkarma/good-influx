@@ -114,3 +114,59 @@ describe('Unrecognized event', () => {
         done();
     });
 });
+
+describe('Metadata', () => {
+    const testEvent = {
+        event: 'log',
+        host: 'mytesthost',
+        timestamp: 1485996802647,
+        tags: ['info', 'request'],
+        data: 'Things are good',
+        pid: 1234
+    };
+
+    it('No metadata set => Tags contain host and PID', (done) => {
+        const logEventNoMetadata = 'log,host=mytesthost,pid=1234 data="Things are good",tags="info,request" 1485996802647000000';
+        expect(LineProtocol.format(testEvent, {})).to.equal(logEventNoMetadata)
+        done()
+    })
+
+    it('Metadata set => Contained in tags', (done) => {
+        const configs = {
+            metadata: {
+                protocol: 'magic'
+            }
+        }
+        const logEventWithMetadata = 'log,host=mytesthost,pid=1234,protocol=magic data="Things are good",tags="info,request" 1485996802647000000';
+        expect(LineProtocol.format(testEvent, configs)).to.equal(logEventWithMetadata)
+    })
+
+    it('Special characters properly escaped', (done) => {
+        const configs = {
+            metadata: {
+                'My,Home': 'BikeCity,USA',
+                'proto=col': 'magic',
+                'bless': 'the rains'
+            }
+        }
+        const tagSet = 'host=mytesthost,pid=1234,My\,Home=BikeCity\,USA,proto\=col=magic, bless=the\ rains'
+
+        const logEventSpecialChars = `log,${tagSet} data="Things are good",tags="info,request" 1485996802647000000`;
+
+        expect(LineProtocol.format(testEvent, configs)).to.equal(logEventSpecialChars)
+    })
+
+    it('Null, undefined and empty string => no metadata added', (done) => {
+        const configs = {
+            metadata: {
+                nullValue: null,
+                undefinedValue: undefined,
+                emptyString: ''
+            }
+        }
+
+        const logEventNoMetadata = 'log,host=mytesthost,pid=1234 data="Things are good",tags="info,request" 1485996802647000000';
+        expect(LineProtocol.format(testEvent, configs)).to.equal(logEventNoMetadata)
+        done()
+    })
+})
