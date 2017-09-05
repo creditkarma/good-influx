@@ -145,13 +145,13 @@ describe('Metadata', () => {
     it('Special characters properly escaped', (done) => {
         const configs = {
             metadata: {
-                'My,Home': 'BikeCity,USA',
-                'proto=col': 'mag=ic',
+                'hometown': 'BikeCity,USA',
+                'protocol': 'mag=ic',
                 'bless': 'the rains'
             }
         };
 
-        const tagSet = 'host=mytesthost,pid=1234,My\,Home=BikeCity\,USA,proto\=col=mag\=ic,bless=the\ rains';
+        const tagSet = 'host=mytesthost,pid=1234,hometown=BikeCity\\,USA,protocol=mag\\=ic,bless=the\\ rains';
         const logEventSpecialChars = `log,${tagSet} data="Things are good",tags="info,request" 1485996802647000000`;
 
         expect(LineProtocol.format(testEvent, configs)).to.equal(logEventSpecialChars);
