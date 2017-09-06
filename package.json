@@ -1,6 +1,6 @@
 {
   "name": "good-influx",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "repository": "git://github.com/fhemberger/good-influx",
   "description": "InfluxDB broadcasting for Good process monitor",
   "main": "lib/index.js",
