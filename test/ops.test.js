@@ -38,28 +38,28 @@ const testOpsEventBase = JSON.stringify({
 });
 
 const getExpectedMessage = (ports, metadata, responseTimesAvg, responseTimesMax) => {
-    const plusMetadata = metadata || '';
+    const plusMetadata = metadata ? `,${metadata}` : '';
     const avg = isNaN(responseTimesAvg) ? 990 : responseTimesAvg;
     const max = isNaN(responseTimesMax) ? 1234 : responseTimesMax;
     const eventHost = `host=${testHost},pid=9876`;
     const expectedBaseMessage = [
-        `ops,${eventHost} os.cpu1m=3.05078125,os.cpu5m=2.11279296875,`,
+        `ops,${eventHost}${plusMetadata} os.cpu1m=3.05078125,os.cpu5m=2.11279296875,`,
         'os.cpu15m=1.625,os.freemem=147881984i,os.totalmem=6089818112i,',
         'os.uptime=23489i,proc.delay=32.29,proc.heapTotal=47271936i,',
         'proc.heapUsed=26825384i,proc.rss=64290816i,',
-        `proc.uptime=22.878${plusMetadata} 1485996802647000000`
+        'proc.uptime=22.878 1485996802647000000'
     ].join('');
 
     const loadOpsRequestsEvents = ports.map((port) => {
-        return `ops_requests,${eventHost},port=${port} requestsTotal=94,requestsDisconnects=1,requests200=61 1485996802647000000`;
+        return `ops_requests,${eventHost}${plusMetadata},port=${port} requestsTotal=94,requestsDisconnects=1,requests200=61 1485996802647000000`;
     });
     const loadOpsConcurrentsEvents = ports.map((port) => {
-        return `ops_concurrents,${eventHost},port=${port} concurrents=23 1485996802647000000`;
+        return `ops_concurrents,${eventHost}${plusMetadata},port=${port} concurrents=23 1485996802647000000`;
     });
     const loadOpsResponseTimesEvents = ports.map((port) => {
-        return `ops_responseTimes,${eventHost},port=${port} avg=${avg},max=${max} 1485996802647000000`;
+        return `ops_responseTimes,${eventHost}${plusMetadata},port=${port} avg=${avg},max=${max} 1485996802647000000`;
     });
-    const loadOpsSocketsEvents = [`ops_sockets,${eventHost} httpTotal=19,httpsTotal=49 1485996802647000000`];
+    const loadOpsSocketsEvents = [`ops_sockets,${eventHost}${plusMetadata} httpTotal=19,httpsTotal=49 1485996802647000000`];
 
     const finalOpsEvents = [
         loadOpsRequestsEvents,
@@ -95,6 +95,18 @@ describe('ops all events', () => {
 
         const formattedEvent = LineProtocol.format(testEvent, {});
         expect(formattedEvent).to.equal(getExpectedMessage([]));
+        done();
+    });
+    it('Metadata included as tags only', (done) => {
+        const config = {
+            metadata: {
+                serviceName: 'my-awesome-service'
+            }
+        };
+        const expectedMetadata = 'serviceName=my-awesome-service';
+        const testEvent = JSON.parse(testOpsEventBase);
+        const formattedEvent = LineProtocol.format(testEvent, config);
+        expect(formattedEvent).to.equal(getExpectedMessage(['8080'], expectedMetadata));
         done();
     });
 });
