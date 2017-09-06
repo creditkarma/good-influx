@@ -101,7 +101,6 @@ const Options = {
     metadata: {
         testing: 'superClutch',
         version: 0,
-        // TODO: What to do about empty strings?
         name: ''
     }
 };
