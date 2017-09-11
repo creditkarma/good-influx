@@ -78,7 +78,7 @@ Creates a new GoodInflux object where:
   - `[metadata]` - arbitrary tags you would like to add to your InfluxDB stats.  This helps you query InfluxDB for the statistics you want.
   - `[prefix]` - applied to each measurement name. Useful if you want to limit the scope of your measurements to a specific service. You can specify a string, or an array of strings (recommended). Arrays will be joined by *prefixDelimiter* below. For example, using `prefix: ['my', 'awesome', 'service']` the `ops` measurement will be renamed to
   `my/awesome/service/ops`
-  - `[prefixDelimiter]` - Used to delimit measurement prefix arrays defined in [prefix] above. Defaults to `/`.
+  - `[prefixDelimiter]` - Used to delimit measurement prefix arrays defined in *prefix* above. Defaults to `/`.
 
 ## Series
 
