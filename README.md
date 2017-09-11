@@ -76,7 +76,8 @@ Creates a new GoodInflux object where:
   - `[wreck]` - configuration object to pass into [`wreck`](https://github.com/hapijs/wreck#advanced). Defaults to `{ timeout: 60000, headers: {} }`. `content-type` is always "text/plain".
   - `[udpType]` - UDP type; defaults to `udp4`. Probably not necessary to change, but more documentation is available on the [NodeJS Dgram Documentation](https://nodejs.org/api/dgram.html#dgram_dgram_createsocket_type_callback)
   - `[metadata]` - arbitrary tags you would like to add to your InfluxDB stats.  This helps you query InfluxDB for the statistics you want.
-  - `[prefix]` - applied to each measurement name. Useful if you want to limit the scope of your measurements to a specific service. You can specify a string, or an array of strings (recommended). Arrays will be joined by [prefixDelimiter] below.
+  - `[prefix]` - applied to each measurement name. Useful if you want to limit the scope of your measurements to a specific service. You can specify a string, or an array of strings (recommended). Arrays will be joined by *prefixDelimiter* below. For example, using `prefix: ['my', 'awesome', 'service']` the `ops` measurement will be renamed to
+  `my/awesome/service/ops`
   - `[prefixDelimiter]` - Used to delimit measurement prefix arrays defined in [prefix] above. Defaults to `/`.
 
 ## Series
