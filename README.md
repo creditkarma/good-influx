@@ -42,7 +42,7 @@ const options = {
                     dataCenter: 'Banff'
                 },
                 prefix: ['my', 'awesome', 'service']
-        	}]
+            }]
         }]
     }
 };
