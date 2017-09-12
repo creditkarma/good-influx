@@ -172,3 +172,34 @@ describe('Metadata', () => {
         done();
     });
 });
+
+describe('Measurement prefixes', () => {
+
+    const testEvent = {
+        event: 'log',
+        host: 'mytesthost',
+        timestamp: 1485996802647,
+        tags: ['info', 'request'],
+        data: 'Things are good',
+        pid: 1234
+    };
+
+    it('Are applied correctly', (done) => {
+        const configs = {
+            prefix: ['my', 'awesome', 'service']
+        };
+        const eventWithPrefix = 'my/awesome/service/log,host=mytesthost,pid=1234 data="Things are good",tags="info,request" 1485996802647000000';
+        expect(LineProtocol.format(testEvent, configs)).to.equal(eventWithPrefix);
+        done();
+    });
+
+    it('Special characters are escaped', (done) => {
+        const configs = {
+            prefix: ['my', ' ', 'awesome', ',', 'service', ' '],
+            prefixDelimiter: ''
+        };
+        const eventWithSpecialCharsInPrefix = 'my\\ awesome\\,service\\ log,host=mytesthost,pid=1234 data="Things are good",tags="info,request" 1485996802647000000';
+        expect(LineProtocol.format(testEvent, configs)).to.equal(eventWithSpecialCharsInPrefix);
+        done();
+    });
+});
