@@ -72,22 +72,22 @@ const getExpectedMessage = (ports, metadata, responseTimesAvg, responseTimesMax)
 };
 
 describe('ops all events', () => {
-    it('One port => five events created', (done) => {
+    it('One port => five events created', () => {
         const testEvent = JSON.parse(testOpsEventBase);
         const formattedEvent = LineProtocol.format(testEvent, {});
         expect(formattedEvent).to.equal(getExpectedMessage(['8080']));
-        done();
     });
-    it('Two ports => nine events created', (done) => {
+
+    it('Two ports => nine events created', () => {
         const testEvent = JSON.parse(testOpsEventBase);
         testEvent.load.requests['8081'] = testEvent.load.requests['8080'];
         testEvent.load.concurrents['8081'] = testEvent.load.concurrents['8080'];
         testEvent.load.responseTimes['8081'] = testEvent.load.responseTimes['8080'];
         const formattedEvent = LineProtocol.format(testEvent, {});
         expect(formattedEvent).to.equal(getExpectedMessage(['8080','8081']));
-        done();
     });
-    it('No ports reported => Only format the ops event', (done) => {
+
+    it('No ports reported => Only format the ops event', () => {
         const testEvent = JSON.parse(testOpsEventBase);
         testEvent.load.requests = {};
         testEvent.load.concurrents = {};
@@ -95,9 +95,9 @@ describe('ops all events', () => {
 
         const formattedEvent = LineProtocol.format(testEvent, {});
         expect(formattedEvent).to.equal(getExpectedMessage([]));
-        done();
     });
-    it('Metadata included as tags only', (done) => {
+
+    it('Metadata included as tags only', () => {
         const config = {
             metadata: {
                 serviceName: 'my-awesome-service'
@@ -107,25 +107,23 @@ describe('ops all events', () => {
         const testEvent = JSON.parse(testOpsEventBase);
         const formattedEvent = LineProtocol.format(testEvent, config);
         expect(formattedEvent).to.equal(getExpectedMessage(['8080'], expectedMetadata));
-        done();
     });
 });
 
 describe('ops_responseTimes avg max', () => {
-    it('avg is null and max is string => avg and max shall be 0s', (done) => {
+    it('avg is null and max is string => avg and max shall be 0s', () => {
         const testEvent = JSON.parse(testOpsEventBase);
         testEvent.load.responseTimes['8080'].avg = null;
         testEvent.load.responseTimes['8080'].max = 'abc';
         const formattedEvent = LineProtocol.format(testEvent, {});
         expect(formattedEvent).to.equal(getExpectedMessage(['8080'],null,0,0));
-        done();
     });
-    it('avg and max are both numbers => avg and max shall be numbers', (done) => {
+
+    it('avg and max are both numbers => avg and max shall be numbers', () => {
         const testEvent = JSON.parse(testOpsEventBase);
         testEvent.load.responseTimes['8080'].avg = 123;
         testEvent.load.responseTimes['8080'].max = '456';
         const formattedEvent = LineProtocol.format(testEvent, {});
         expect(formattedEvent).to.equal(getExpectedMessage(['8080'],null,123,456));
-        done();
     });
 });

@@ -1,7 +1,7 @@
 # good-influx
 
 [InfluxDB](https://docs.influxdata.com/) broadcasting for Good process monitor, based on [good-http](https://github.com/hapijs/good-http).
-It can write to HTTP or UDP Telegraf endpoints.
+It can write to HTTP or UDP Telegraf endpoints. Requires at least Node.js v8 and hapi v17.
 
 ![Current Version](https://img.shields.io/npm/v/good-influx.svg)
 [![Build Status](https://travis-ci.org/fhemberger/good-influx.svg?branch=master)](https://travis-ci.org/fhemberger/good-influx)

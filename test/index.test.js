@@ -58,7 +58,7 @@ const mocks = {
         return `${protocol}://${address.address}:${address.port}`;
     },
 
-    getHttpServer(expectedMsg, done) {
+    getHttpServer (expectedMsg) {
         let hitCount = 0;
         const server = Http.createServer((req, res) => {
             let data = '';
@@ -72,7 +72,7 @@ const mocks = {
 
                 res.end();
                 if (hitCount >= 2) {
-                    server.close(done);
+                    server.close();
                 }
             });
         });
@@ -80,7 +80,7 @@ const mocks = {
         return server;
     },
 
-    getUdpServer(expectedNumberOfEvents, expectedMsg, done) {
+    getUdpServer (expectedNumberOfEvents, expectedMsg) {
         let hitCount = 0;
         const server = Dgram.createSocket('udp4');
         server.on('message', (msg) => {
@@ -88,7 +88,7 @@ const mocks = {
             validateResponses(msg.toString(), expectedNumberOfEvents, expectedMsg);
 
             if (hitCount >= 2) {
-                server.close(done);
+                server.close();
             }
         });
         server.bind(9876, '127.0.0.1');
@@ -107,8 +107,8 @@ const Options = {
 
 describe('GoodInflux', () => {
     describe('HTTP URL =>', () => {
-        it('Sends events in a stream to HTTP server', (done) => {
-            const server = mocks.getHttpServer(msgWithMetadata, done);
+        it('Sends events in a stream to HTTP server', async () => {
+            const server = await mocks.getHttpServer(msgWithMetadata);
             const stream = mocks.readStream();
 
             server.listen(0, '127.0.0.1', () => {
@@ -125,8 +125,8 @@ describe('GoodInflux', () => {
     });
 
     describe('UDP URL =>', () => {
-        it('Threshold not set => Sends 5 events in a stream to UDP server', (done) => {
-            const server = mocks.getUdpServer(5, msgWithMetadata, done);
+        it('Threshold not set => Sends 5 events in a stream to UDP server', async () => {
+            const server = await mocks.getUdpServer(5, msgWithMetadata);
             const stream = mocks.readStream();
 
             server.on('listening', () => {
@@ -142,8 +142,8 @@ describe('GoodInflux', () => {
             });
         });
 
-        it('Threshold of 3 => Sends 3 events in a stream to UDP server', (done) => {
-            const server = mocks.getUdpServer(3, msgWithoutMetadata, done);
+        it('Threshold of 3 => Sends 3 events in a stream to UDP server', async () => {
+            const server = await mocks.getUdpServer(3, msgWithoutMetadata);
             const stream = mocks.readStream();
 
             server.on('listening', () => {
@@ -161,8 +161,8 @@ describe('GoodInflux', () => {
             });
         });
 
-        it('Threshold of 13 => Sends 5 events in a stream to UDP server', (done) => {
-            const server = mocks.getUdpServer(5, msgWithoutMetadata, done);
+        it('Threshold of 13 => Sends 5 events in a stream to UDP server', async () => {
+            const server = await mocks.getUdpServer(5, msgWithoutMetadata);
             const stream = mocks.readStream();
 
             server.on('listening', () => {
@@ -181,15 +181,14 @@ describe('GoodInflux', () => {
         });
     });
 
-    it('Unsupported protocol => throw error', (done) => {
+    it('Unsupported protocol => throw error', () => {
         expect(() => {
             return new GoodInflux('ftp://abcd:1234', {});
         }).to.throw(Error, 'Unsupported protocol ftp:. Supported protocols are udp, http or https');
-        done();
     });
 
-    it('Omit metadata when not defined', (done) => {
-        const server = mocks.getHttpServer(msgWithoutMetadata, done);
+    it('Omit metadata when not defined', async () => {
+        const server = await mocks.getHttpServer(msgWithoutMetadata);
         const stream = mocks.readStream();
 
         server.listen(0, '127.0.0.1', () => {
@@ -207,8 +206,8 @@ describe('GoodInflux', () => {
         });
     });
 
-    it('Omit metadata when empty', (done) => {
-        const server = mocks.getHttpServer(msgWithoutMetadata, done);
+    it('Omit metadata when empty', async () => {
+        const server = await mocks.getHttpServer(msgWithoutMetadata);
         const stream = mocks.readStream();
 
         server.listen(0, '127.0.0.1', () => {
@@ -227,8 +226,8 @@ describe('GoodInflux', () => {
         });
     });
 
-    it('Omit undefined metadata', (done) => {
-        const server = mocks.getHttpServer(msgWithMetadata, done);
+    it('Omit undefined metadata', async () => {
+        const server = await mocks.getHttpServer(msgWithMetadata);
         const stream = mocks.readStream();
 
         const opts = Hoek.clone(Options);
