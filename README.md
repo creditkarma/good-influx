@@ -3,6 +3,7 @@
 [InfluxDB](https://docs.influxdata.com/) broadcasting for Good process monitor, based on [good-http](https://github.com/hapijs/good-http).
 It can write to HTTP or UDP Telegraf endpoints.
 
+[![Maintainers Wanted](https://img.shields.io/badge/maintainers-wanted-red.svg)](https://github.com/fhemberger/good-influx/issues/9)
 ![Current Version](https://img.shields.io/npm/v/good-influx.svg)
 [![Build Status](https://travis-ci.org/fhemberger/good-influx.svg?branch=master)](https://travis-ci.org/fhemberger/good-influx)
 [![Greenkeeper badge](https://badges.greenkeeper.io/fhemberger/good-influx.svg)](https://greenkeeper.io/)
