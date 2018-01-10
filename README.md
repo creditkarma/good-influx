@@ -89,8 +89,10 @@ time | host | pid | error | id | method | url
 
 ### Log
 
-time | host | pid | data | tags
+time | host | pid | data* | tags
 -----|------|-----|------|-----
+
+* if `data.stats` exists, collect all fields within and send as numbers
 
 ### Ops
 

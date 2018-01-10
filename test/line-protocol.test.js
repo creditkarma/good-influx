@@ -25,6 +25,28 @@ describe('log', () => {
         expect(formattedLogEvent).to.equal(expectedLogEvent);
         done();
     });
+
+    it('Event stats log is formatted as expected', (done) => {
+        const testEvent = {
+            event: 'log',
+            host: 'mytesthost',
+            timestamp: 1485996802647,
+            tags: ['info', 'request'],
+            data: {
+                stats: {
+                    stats1: 123,
+                    stats2: 456.7,
+                    stats3: '789.1sec',
+                    stats4: 'abc'
+                }
+            },
+            pid: 1234
+        };
+        const formattedLogEvent = LineProtocol.format(testEvent, {});
+        const expectedLogEvent = 'log,host=mytesthost,pid=1234 stats1=123i,stats2=456.7,stats3=789.1 1485996802647000000';
+        expect(formattedLogEvent).to.equal(expectedLogEvent);
+        done();
+    });
 });
 
 describe('request', () => {
