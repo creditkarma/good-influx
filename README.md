@@ -79,6 +79,7 @@ Creates a new GoodInflux object where:
   - `[prefix]` - applied to each measurement name. Useful if you want to limit the scope of your measurements to a specific service. You can specify a string, or an array of strings (recommended). Arrays will be joined by *prefixDelimiter* below. For example, using `prefix: ['my', 'awesome', 'service']` the `ops` measurement will be renamed to
   `my/awesome/service/ops`
   - `[prefixDelimiter]` - Used to delimit measurement prefix arrays defined in *prefix* above. Defaults to `/`.
+  - `[customLogField]` - when specified, all the fields within `Hoek.reach(data, customLogField)` will be sent as indivudual fields
 
 ## Series
 
@@ -92,7 +93,7 @@ time | host | pid | error | id | method | url
 time | host | pid | data* | tags
 -----|------|-----|------|-----
 
-* if `data.stats` exists, collect all fields within and send as numbers
+* when `config.customLogField` is specified, collect all fields within `Hoek.reach(data, customLogField)` and send as indivudual fields
 
 ### Ops
 
