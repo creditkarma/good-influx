@@ -43,7 +43,7 @@ describe('log', () => {
             pid: 1234
         };
         const formattedLogEvent = LineProtocol.format(testEvent, { customLogField: 'stats' });
-        const expectedLogEvent = 'log,host=mytesthost,pid=1234 stats1=123i,stats2=456.7,stats3=789.1 1485996802647000000';
+        const expectedLogEvent = 'log,host=mytesthost,pid=1234 stats1=123i,stats2=456.7,stats3=789.1,stats4=\"abc\" 1485996802647000000';
         expect(formattedLogEvent).to.equal(expectedLogEvent);
         done();
     });
