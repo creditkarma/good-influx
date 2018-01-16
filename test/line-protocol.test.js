@@ -47,6 +47,26 @@ describe('log', () => {
         expect(formattedLogEvent).to.equal(expectedLogEvent);
         done();
     });
+
+    it('throw error if customLogFormatter is not a function', (done) => {
+        const testEvent = {
+            event: 'log',
+            host: 'mytesthost',
+            timestamp: 1485996802647,
+            tags: ['info', 'request'],
+            data: {
+                stats: {
+                    stats1: 123
+                }
+            },
+            pid: 1234
+        };
+        const throws = () => {
+            LineProtocol.format(testEvent, { customLogFormatter: 'test-string' });
+        };
+        expect(throws).to.throw(Error, 'customLogFormatter should be a function');
+        done();
+    });
 });
 
 describe('request', () => {
