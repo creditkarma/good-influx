@@ -26,7 +26,7 @@ describe('log', () => {
         done();
     });
 
-    it('Event stats log is formatted as expected', (done) => {
+    it('custom formated log is processed as expected', (done) => {
         const testEvent = {
             event: 'log',
             host: 'mytesthost',
@@ -42,7 +42,7 @@ describe('log', () => {
             },
             pid: 1234
         };
-        const formattedLogEvent = LineProtocol.format(testEvent, { customLogField: 'stats' });
+        const formattedLogEvent = LineProtocol.format(testEvent, { customLogFormatter: (data) => data.stats });
         const expectedLogEvent = 'log,host=mytesthost,pid=1234 stats1=123i,stats2=456.7,stats3=789.1,stats4=\"abc\" 1485996802647000000';
         expect(formattedLogEvent).to.equal(expectedLogEvent);
         done();

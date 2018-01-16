@@ -79,7 +79,26 @@ Creates a new GoodInflux object where:
   - `[prefix]` - applied to each measurement name. Useful if you want to limit the scope of your measurements to a specific service. You can specify a string, or an array of strings (recommended). Arrays will be joined by *prefixDelimiter* below. For example, using `prefix: ['my', 'awesome', 'service']` the `ops` measurement will be renamed to
   `my/awesome/service/ops`
   - `[prefixDelimiter]` - Used to delimit measurement prefix arrays defined in *prefix* above. Defaults to `/`.
-  - `[customLogField]` - when specified, all the fields within `Hoek.reach(data, customLogField)` will be sent as indivudual fields
+  - `[customLogFormatter]` - custom function to trasform `log.data` into a flattened map (`[key: string]: string|number`), and the key/value pairs will be sent as indivudual fields. For example:
+    ```javascript
+    const testEvent = {
+        event: 'log',
+        host: 'mytesthost',
+        timestamp: 1485996802647,
+        tags: ['info', 'request'],
+        data: {
+            stats: {
+                stats1: 123,
+                stats2: 456.7,
+                stats3: '789.1sec',
+                stats4: 'abc'
+            }
+        },
+        pid: 1234
+    };
+    const formattedLogEvent = LineProtocol.format(testEvent, { customLogFormatter: (data) => data.stats });
+    const expectedLogEvent = 'log,host=mytesthost,pid=1234 stats1=123i,stats2=456.7,stats3=789.1,stats4=\"abc\" 1485996802647000000';
+    ```
 
 ## Series
 
@@ -93,7 +112,7 @@ time | host | pid | error | id | method | url
 time | host | pid | data* | tags
 -----|------|-----|------|-----
 
-* when `config.customLogField` is specified, collect all fields within `Hoek.reach(data, customLogField)` and send as indivudual fields
+* when `config.customLogFormatter` is specified, collect all fields within `config.customLogFormatter(log.data)` and send as indivudual fields
 
 ### Ops
 
