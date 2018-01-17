@@ -115,7 +115,7 @@ time | host | pid | error | id | method | url
 time | host | pid | data* | tags
 -----|------|-----|------|-----
 
-* when `config.customLogFormatters` is specified, collect all fields within `config.customLogFormatter[tag](log.data)` and send as indivudual fields
+* when `config.customLogFormatters` is specified, collect all fields within `config.customLogFormatter[tag](log.data)` and send as individual fields
 
 ### Ops
 
