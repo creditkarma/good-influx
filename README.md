@@ -79,29 +79,30 @@ Creates a new GoodInflux object where:
   - `[prefix]` - applied to each measurement name. Useful if you want to limit the scope of your measurements to a specific service. You can specify a string, or an array of strings (recommended). Arrays will be joined by *prefixDelimiter* below. For example, using `prefix: ['my', 'awesome', 'service']` the `ops` measurement will be renamed to
   `my/awesome/service/ops`
   - `[prefixDelimiter]` - Used to delimit measurement prefix arrays defined in *prefix* above. Defaults to `/`.
-  - `[customLogFormatters]` - custom functions for specific tag to trasform `log.data` into a flattened map (`[key: string]: string|number`), and the key/value pairs will be sent as indivudual fields. For example:
-    ```javascript
-    const testEvent = {
-        event: 'log',
-        host: 'mytesthost',
-        timestamp: 1485996802647,
-        tags: ['info', 'request', 'stats'],
-        data: {
-            stats: {
-                stats1: 123,
-                stats2: 456.7,
-                stats3: '789.1sec',
-                stats4: 'abc'
-            }
-        },
-        pid: 1234
-    };
-    // the formatter will transform only events with 'stats' tag, leaving other events untouched
-    // multiple tags -> formatter can be passed, just remember to use specific tags so the formatter can handle data correctly
-    const formattedLogEvent = LineProtocol.format(testEvent, { customLogFormatters: { stats: (data) => data.stats });
-    const expectedLogEvent = 'log,host=mytesthost,pid=1234 stats1=123i,stats2=456.7,stats3=789.1,stats4=\"abc\" 1485996802647000000';
-    ```
-
+  - `[customLogFormatters]` - This options allows you to report specific log events based on tag. Ordinarily, log events are sent as a string. However, you may want to extract a custom data field and send it to Influx in a more searchable format. For example:
+```json
+{
+  "event": "log",
+  "tags": ["request", "myCustomStats"],
+  "data": {
+    "inducedLatency": 40
+  }
+}
+```
+By default, good-influx will send this to InfluxDB as:
+```json
+message="{\"inducedLatency\":40}"
+```
+However, that JSON string is not searchable. You can pass in a custom formatter for tag myCustomStats:
+```javascript
+const customFormatters = {
+  myCustomStats: (eventData) => {
+    return {
+      inducedLatency: eventData.inducedLatency
+    }
+  }
+}
+```
 ## Series
 
 ### Error
