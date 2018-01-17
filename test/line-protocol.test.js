@@ -8,6 +8,7 @@ const lab = exports.lab = Lab.script();
 
 const describe = lab.describe;
 const it = lab.it;
+const fail = lab.fail;
 const expect = Code.expect;
 
 describe('log', () => {
@@ -57,7 +58,7 @@ describe('log', () => {
             data: 'Things are good',
             pid: 1234
         };
-        const formattedLogEvent = LineProtocol.format(testEvent, { customLogFormatters: { stats: (data) => expect(true).false() } });
+        const formattedLogEvent = LineProtocol.format(testEvent, { customLogFormatters: { stats: (data) => fail() } });
         const expectedLogEvent = 'log,host=mytesthost,pid=1234 data="Things are good",tags="info,request" 1485996802647000000';
         expect(formattedLogEvent).to.equal(expectedLogEvent);
         done();

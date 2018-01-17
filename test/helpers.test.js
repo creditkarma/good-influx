@@ -73,8 +73,15 @@ describe('firstCommonItem', () => {
         expect(result).to.be.undefined();
         done();
     });
-    it('should return first common item', (done) => {
+    it('should return first common item in b', (done) => {
         const a = [1,2,3];
+        const b = [2,3,4];
+        const result = Helpers.firstCommonItem(a, b);
+        expect(result).to.equal(2);
+        done();
+    });
+    it('should return first common item in b', (done) => {
+        const a = [3,2,1];
         const b = [2,3,4];
         const result = Helpers.firstCommonItem(a, b);
         expect(result).to.equal(2);

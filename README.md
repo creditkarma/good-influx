@@ -79,7 +79,7 @@ Creates a new GoodInflux object where:
   - `[prefix]` - applied to each measurement name. Useful if you want to limit the scope of your measurements to a specific service. You can specify a string, or an array of strings (recommended). Arrays will be joined by *prefixDelimiter* below. For example, using `prefix: ['my', 'awesome', 'service']` the `ops` measurement will be renamed to
   `my/awesome/service/ops`
   - `[prefixDelimiter]` - Used to delimit measurement prefix arrays defined in *prefix* above. Defaults to `/`.
-  - `[customLogFormatters]` - This options allows you to report specific log events based on tag. Ordinarily, log events are sent as a string. However, you may want to extract a custom data field and send it to Influx in a more searchable format. For example:
+  - `[customLogFormatters]` - This options allows you to report specific log events based on tag (Note the first matching tag in `event.tags` will be used, it's better to have specific tags in practice). Ordinarily, log events are sent as a string. However, you may want to extract a custom data field and send it to Influx in a more searchable format. For example:
 ```json
 {
   "event": "log",
