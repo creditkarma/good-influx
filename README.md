@@ -79,13 +79,13 @@ Creates a new GoodInflux object where:
   - `[prefix]` - applied to each measurement name. Useful if you want to limit the scope of your measurements to a specific service. You can specify a string, or an array of strings (recommended). Arrays will be joined by *prefixDelimiter* below. For example, using `prefix: ['my', 'awesome', 'service']` the `ops` measurement will be renamed to
   `my/awesome/service/ops`
   - `[prefixDelimiter]` - Used to delimit measurement prefix arrays defined in *prefix* above. Defaults to `/`.
-  - `[customLogFormatter]` - custom function to trasform `log.data` into a flattened map (`[key: string]: string|number`), and the key/value pairs will be sent as indivudual fields. For example:
+  - `[customLogFormatters]` - custom functions for specific tag to trasform `log.data` into a flattened map (`[key: string]: string|number`), and the key/value pairs will be sent as indivudual fields. For example:
     ```javascript
     const testEvent = {
         event: 'log',
         host: 'mytesthost',
         timestamp: 1485996802647,
-        tags: ['info', 'request'],
+        tags: ['info', 'request', 'stats'],
         data: {
             stats: {
                 stats1: 123,
@@ -96,7 +96,9 @@ Creates a new GoodInflux object where:
         },
         pid: 1234
     };
-    const formattedLogEvent = LineProtocol.format(testEvent, { customLogFormatter: (data) => data.stats });
+    // the formatter will transform only events with 'stats' tag, leaving other events untouched
+    // multiple tags -> formatter can be passed, just remember to use specific tags so the formatter can handle data correctly
+    const formattedLogEvent = LineProtocol.format(testEvent, { customLogFormatters: { stats: (data) => data.stats });
     const expectedLogEvent = 'log,host=mytesthost,pid=1234 stats1=123i,stats2=456.7,stats3=789.1,stats4=\"abc\" 1485996802647000000';
     ```
 
@@ -112,7 +114,7 @@ time | host | pid | error | id | method | url
 time | host | pid | data* | tags
 -----|------|-----|------|-----
 
-* when `config.customLogFormatter` is specified, collect all fields within `config.customLogFormatter(log.data)` and send as indivudual fields
+* when `config.customLogFormatters` is specified, collect all fields within `config.customLogFormatter[tag](log.data)` and send as indivudual fields
 
 ### Ops
 

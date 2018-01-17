@@ -50,3 +50,35 @@ describe('measurementPrefix', () => {
         done();
     });
 });
+
+describe('firstCommonItem', () => {
+    it('undefined if input is not array', (done) => {
+        const a = [1,2,3];
+        const b = 4;
+        const result = Helpers.firstCommonItem(a, b);
+        expect(result).to.be.undefined();
+        done();
+    });
+    it('undefined if input is not array', (done) => {
+        const b = [1,2,3];
+        const a = 4;
+        const result = Helpers.firstCommonItem(a, b);
+        expect(result).to.be.undefined();
+        done();
+    });
+    it('undefind if inputs have no common item', (done) => {
+        const a = [1,2,3];
+        const b = [4];
+        const result = Helpers.firstCommonItem(a, b);
+        expect(result).to.be.undefined();
+        done();
+    });
+    it('should return first common item', (done) => {
+        const a = [1,2,3];
+        const b = [2,3,4];
+        const result = Helpers.firstCommonItem(a, b);
+        expect(result).to.equal(2);
+        done();
+    });
+
+});
