@@ -8,6 +8,7 @@ const lab = exports.lab = Lab.script();
 
 const describe = lab.describe;
 const it = lab.it;
+const fail = lab.fail;
 const expect = Code.expect;
 
 describe('log', () => {
@@ -23,6 +24,63 @@ describe('log', () => {
         const formattedLogEvent = LineProtocol.format(testEvent, {});
         const expectedLogEvent = 'log,host=mytesthost,pid=1234 data="Things are good",tags="info,request" 1485996802647000000';
         expect(formattedLogEvent).to.equal(expectedLogEvent);
+        done();
+    });
+
+    it('custom formated log is processed as expected', (done) => {
+        const testEvent = {
+            event: 'log',
+            host: 'mytesthost',
+            timestamp: 1485996802647,
+            tags: ['info', 'request', 'stats'],
+            data: {
+                stats: {
+                    stats1: 123,
+                    stats2: 456.7,
+                    stats3: '789.1sec',
+                    stats4: 'abc'
+                }
+            },
+            pid: 1234
+        };
+        const formattedLogEvent = LineProtocol.format(testEvent, { customLogFormatters: { stats: (data) => data.stats } });
+        const expectedLogEvent = 'log,host=mytesthost,pid=1234 stats1=123i,stats2=456.7,stats3=789.1,stats4=\"abc\" 1485996802647000000';
+        expect(formattedLogEvent).to.equal(expectedLogEvent);
+        done();
+    });
+
+    it('Event log is formatted as normal if tag not found', (done) => {
+        const testEvent = {
+            event: 'log',
+            host: 'mytesthost',
+            timestamp: 1485996802647,
+            tags: ['info', 'request'],
+            data: 'Things are good',
+            pid: 1234
+        };
+        const formattedLogEvent = LineProtocol.format(testEvent, { customLogFormatters: { stats: (data) => fail() } });
+        const expectedLogEvent = 'log,host=mytesthost,pid=1234 data="Things are good",tags="info,request" 1485996802647000000';
+        expect(formattedLogEvent).to.equal(expectedLogEvent);
+        done();
+    });
+
+    it('throw error if customLogFormatter is not a function', (done) => {
+        const testEvent = {
+            event: 'log',
+            host: 'mytesthost',
+            timestamp: 1485996802647,
+            tags: ['info', 'request', 'stats'],
+            data: {
+                stats: {
+                    stats1: 123
+                }
+            },
+            pid: 1234
+        };
+        const throws = () => {
+            LineProtocol.format(testEvent, { customLogFormatters: { stats: 'test-string' } });
+        };
+        expect(throws).to.throw(Error, 'customLogFormatter should be a function');
         done();
     });
 });
