@@ -79,7 +79,30 @@ Creates a new GoodInflux object where:
   - `[prefix]` - applied to each measurement name. Useful if you want to limit the scope of your measurements to a specific service. You can specify a string, or an array of strings (recommended). Arrays will be joined by *prefixDelimiter* below. For example, using `prefix: ['my', 'awesome', 'service']` the `ops` measurement will be renamed to
   `my/awesome/service/ops`
   - `[prefixDelimiter]` - Used to delimit measurement prefix arrays defined in *prefix* above. Defaults to `/`.
-
+  - `[customLogFormatters]` - This options allows you to report specific log events based on tag (Note the first matching tag in `event.tags` will be used, it's better to have specific tags in practice). Ordinarily, log events are sent as a string. However, you may want to extract a custom data field and send it to Influx in a more searchable format. For example:
+```json
+{
+  "event": "log",
+  "tags": ["request", "myCustomStats"],
+  "data": {
+    "inducedLatency": 40
+  }
+}
+```
+By default, good-influx will send this to InfluxDB as:
+```json
+message="{\"inducedLatency\":40}"
+```
+However, that JSON string is not searchable. You can pass in a custom formatter for tag myCustomStats:
+```javascript
+const customFormatters = {
+  myCustomStats: (eventData) => {
+    return {
+      inducedLatency: eventData.inducedLatency
+    }
+  }
+}
+```
 ## Series
 
 ### Error
@@ -89,8 +112,10 @@ time | host | pid | error | id | method | url
 
 ### Log
 
-time | host | pid | data | tags
+time | host | pid | data* | tags
 -----|------|-----|------|-----
+
+* when `config.customLogFormatters` is specified, collect all fields within `config.customLogFormatter[tag](log.data)` and send as individual fields
 
 ### Ops
 
