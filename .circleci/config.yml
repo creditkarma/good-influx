@@ -1,5 +1,5 @@
 defaults: &defaults
-  working_directory: ~/good-influx
+  working_directory: ~/repo
   docker:
     - image: circleci/node:6.10.3
 
@@ -9,11 +9,24 @@ jobs:
     <<: *defaults
     steps:
       - checkout
+
       - attach_workspace:
           at: ./
-      - run:
-          name: install-npm
-          command: npm install
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
       - run:
           name: npm-test
           command: npm test
@@ -28,9 +41,6 @@ jobs:
       - run:
           name: npm-install
           command: npm install
-      - run:
-          name: npm-build
-          command: npm run build
       - run:
           name: publish-npm
           command: npm run release:publish
