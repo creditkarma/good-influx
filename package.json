@@ -1,7 +1,7 @@
 {
   "name": "good-influx",
   "version": "3.1.0",
-  "repository": "git://github.com/nnance/good-influx",
+  "repository": "https://github.com/creditkarma/good-influx",
   "description": "InfluxDB broadcasting for Good process monitor",
   "main": "lib/index.js",
   "scripts": {

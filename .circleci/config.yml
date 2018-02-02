@@ -1,0 +1,63 @@
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: circleci/node:6.10.3
+
+version: 2
+jobs:
+  test:
+    <<: *defaults
+    steps:
+      - checkout
+
+      - attach_workspace:
+          at: ./
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - run:
+          name: npm-test
+          command: npm test
+
+  publish:
+    <<: *defaults
+    steps:
+      - checkout
+      - run:
+          name: npm-token
+          command: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
+      - run:
+          name: npm-install
+          command: npm install
+      - run:
+          name: publish-npm
+          command: npm run release:publish
+
+workflows:
+  version: 2
+  build_test:
+      jobs:
+        - test:
+            filters:
+              tags:
+                only: /.*/
+        # - publish:
+        #     requires:
+        #       - test
+        #     filters:
+        #       tags:
+        #         only: /(v)?[0-9]+(\.[0-9]+)*/
+        #       branches:
+        #         ignore: /.*/

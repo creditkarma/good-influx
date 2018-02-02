@@ -4,8 +4,7 @@
 It can write to HTTP or UDP Telegraf endpoints.
 
 ![Current Version](https://img.shields.io/npm/v/good-influx.svg)
-[![Build Status](https://travis-ci.org/fhemberger/good-influx.svg?branch=master)](https://travis-ci.org/fhemberger/good-influx)
-[![Greenkeeper badge](https://badges.greenkeeper.io/fhemberger/good-influx.svg)](https://greenkeeper.io/)
+[![Build Status](https://circleci.com/gh/creditkarma/good-influx.svg?style=shield&circle-token=aeb10ab0821c3b83e296d3f2d113c2db68afafc6)](https://circleci.com/gh/creditkarma/good-influx.svg?style=shield&circle-token=aeb10ab0821c3b83e296d3f2d113c2db68afafc6)
 
 
 `Good Influx` will format your Good data according to the [InfluxDB Line Protocol](https://docs.influxdata.com/influxdb/v1.1/write_protocols/line_protocol_tutorial/).
