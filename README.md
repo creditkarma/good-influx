@@ -80,6 +80,7 @@ Creates a new GoodInflux object where:
   `my/awesome/service/ops`
   - `[prefixDelimiter]` - Used to delimit measurement prefix arrays defined in *prefix* above. Defaults to `/`.
   - `[customLogFormatters]` - This options allows you to report specific log events based on tag (Note the first matching tag in `event.tags` will be used, it's better to have specific tags in practice). Ordinarily, log events are sent as a string. However, you may want to extract a custom data field and send it to Influx in a more searchable format. For example:
+  - `[fieldTags]` - This option takes an array of strings. When logging data it will look for those fields in the data values processed and then add them to the `tags` if they are.
 ```json
 {
   "event": "log",
