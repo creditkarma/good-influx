@@ -81,6 +81,8 @@ Creates a new GoodInflux object where:
   - `[prefixDelimiter]` - Used to delimit measurement prefix arrays defined in *prefix* above. Defaults to `/`.
   - `[customLogFormatters]` - This options allows you to report specific log events based on tag (Note the first matching tag in `event.tags` will be used, it's better to have specific tags in practice). Ordinarily, log events are sent as a string. However, you may want to extract a custom data field and send it to Influx in a more searchable format. For example:
   - `[fieldTags]` - This option takes an array of strings. When logging data it will look for those fields in the data values processed and then add them to the `tags` if they are.
+  - `[measurementDeterminer]` - This is a function which can be provided if you would like to determine which measurement to use based on other data than the event name. The function is called with the whole `event` object. Changing the measurement does _not_ affect the processing of its data. If this is provided, `prefix` and `prefixDelimiter` are obth ignored.
+  - `[valueTransformer]` - This function gets called, if present, after the event data has been processed and squashed. It is passed the squashed data, the event, and the `Formatters`. If present, this function must return an object representing the field data. The purpose of this function is to make any last minute transformations or formatting changes to the data before it gets sent. A good example of use is if you have a field which is sometimes a string and sometimes a float. This will allow you to choose one or otherwise delete the field if none apply (so that your log entry gets logged despite the type mismatch).
 ```json
 {
   "event": "log",
