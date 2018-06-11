@@ -23,7 +23,8 @@ describe('Formatters - Flatten', () => {
             c: 5,
             d: 5.1,
             e: ['test', 'array'],
-            f: 'string'
+            f: 'string',
+            g: undefined
         };
         const flatData = Formatters.Flatten(data);
 
@@ -32,6 +33,7 @@ describe('Formatters - Flatten', () => {
         expect(flatData['data.d']).to.equal(5.1);
         expect(flatData['data.e']).to.equal('\"test,array\"');
         expect(flatData['data.f']).to.equal('\"string\"');
+        expect(flatData['data.g']).to.not.exist();
         done();
     });
 
@@ -64,6 +66,14 @@ describe('Formatters - Flatten', () => {
         const flatData = Formatters.Flatten(data);
 
         expect(flatData.data).to.equal(5.1);
+        done();
+    });
+
+    it('flatten undefined', (done) => {
+        const data = undefined;
+        const flatData = Formatters.Flatten(data);
+
+        expect(flatData.data).to.be.undefined();
         done();
     });
 });
