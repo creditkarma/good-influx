@@ -2,10 +2,14 @@
 
 const Code = require('code');
 const Lab = require('lab');
+const Sinon = require('sinon');
+const Os = require('os');
 const lab = exports.lab = Lab.script();
 
 const describe = lab.describe;
 const it = lab.it;
+const beforeEach = lab.beforeEach;
+const afterEach = lab.afterEach;
 const expect = Code.expect;
 
 const Formatters = require('../lib/formatters');
@@ -60,6 +64,86 @@ describe('Formatters - Flatten', () => {
         const flatData = Formatters.Flatten(data);
 
         expect(flatData.data).to.equal(5.1);
+        done();
+    });
+});
+
+describe('Formatters - tags', () => {
+    let sandbox;
+
+    beforeEach((done) => {
+        sandbox = Sinon.createSandbox();
+        sandbox.stub(Os, 'hostname').returns('test');
+        done();
+    });
+
+    afterEach((done) => {
+        sandbox.restore();
+        done();
+    });
+
+    it('formats tags with no config', (done) => {
+        const config = {};
+        const event = {
+            pid: 1
+        };
+        const values = {};
+
+        const tags = Formatters.tags(config, event, values);
+        expect(tags).to.equal({
+            host: 'test',
+            pid: 1
+        });
+
+        done();
+    });
+
+    it('formats tags with metadata', (done) => {
+        const config = {
+            metadata: {
+                a: 'test',
+                b: undefined,
+                c: null,
+                d: ''
+            }
+        };
+        const event = {
+            host: 'host',
+            pid: 1
+        };
+        const values = {};
+
+        const tags = Formatters.tags(config, event, values);
+        expect(tags).to.equal({
+            host: 'host',
+            pid: 1,
+            a: 'test'
+        });
+
+        done();
+    });
+
+    it('formats tags with field tags', (done) => {
+        const config = {
+            fieldTags: ['a', 'b', 'c']
+        };
+        const event = {
+            host: 'host',
+            pid: 1
+        };
+        const values = {
+            a: 'test',
+            b: '"test"'
+        };
+
+        const tags = Formatters.tags(config, event, values);
+        expect(tags).to.equal({
+            host: 'host',
+            pid: 1,
+            a: 'test',
+            b: 'test'
+        });
+
         done();
     });
 });
