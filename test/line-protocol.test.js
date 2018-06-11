@@ -262,7 +262,7 @@ describe('Measurement prefixes', () => {
     });
 });
 
-describe('Measurement Determiner', () => {
+describe('Measurement Override', () => {
     const testEvent = {
         event: 'log',
         host: 'mytesthost',
@@ -274,7 +274,7 @@ describe('Measurement Determiner', () => {
 
     it('Change the measurement to the given name', (done) => {
         const configs = {
-            measurementDeterminer: () => {
+            measurementOverride: () => {
                 return 'test';
             }
         };
