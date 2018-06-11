@@ -261,3 +261,52 @@ describe('Measurement prefixes', () => {
         done();
     });
 });
+
+describe('Measurement Determiner', () => {
+    const testEvent = {
+        event: 'log',
+        host: 'mytesthost',
+        timestamp: 1485996802647,
+        tags: ['info', 'request'],
+        data: 'Things are good',
+        pid: 1234
+    };
+
+    it('Change the measurement to the given name', (done) => {
+        const configs = {
+            measurementDeterminer: () => {
+                return 'test';
+            }
+        };
+
+        const lineItem = 'test,host=mytesthost,pid=1234 data="Things are good",tags="info,request" 1485996802647000000';
+        expect(LineProtocol.format(testEvent, configs)).to.equal(lineItem);
+        done();
+    });
+});
+
+describe('Value Transformer', () => {
+    const testEvent = {
+        event: 'log',
+        host: 'mytesthost',
+        timestamp: 1485996802647,
+        tags: ['info', 'request'],
+        data: 'Things are good',
+        pid: 1234
+    };
+
+    it('Transform the values returned', (done) => {
+        const configs = {
+            valueTransformer: (values, event, Formatters) => {
+                return {
+                    data: Formatters.String('test'),
+                    tags: values.tags
+                };
+            }
+        };
+
+        const lineItem = 'log,host=mytesthost,pid=1234 data="test",tags="info,request" 1485996802647000000';
+        expect(LineProtocol.format(testEvent, configs)).to.equal(lineItem);
+        done();
+    });
+});
