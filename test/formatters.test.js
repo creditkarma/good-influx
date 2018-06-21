@@ -2,17 +2,59 @@
 
 const Code = require('code');
 const Lab = require('lab');
-const Sinon = require('sinon');
-const Os = require('os');
 const lab = exports.lab = Lab.script();
 
 const describe = lab.describe;
 const it = lab.it;
-const beforeEach = lab.beforeEach;
-const afterEach = lab.afterEach;
 const expect = Code.expect;
 
 const Formatters = require('../lib/formatters');
+
+describe('Formatters - Int', () => {
+    it('formats an integer', (done) => {
+        expect(Formatters.Int(1)).to.equal('1i');
+        done();
+    });
+
+    it('formats a float', (done) => {
+        expect(Formatters.Int(1.1)).to.equal('1i');
+        done();
+    });
+
+    it('formats a string', (done) => {
+        expect(Formatters.Int('1')).to.equal('1i');
+        done();
+    });
+
+    it('does not format a non-number', (done) => {
+        expect(Formatters.Int('a')).to.equal(undefined);
+        done();
+    });
+});
+
+describe('Formatters - String', () => {
+    it('formats a basic string', (done) => {
+        expect(Formatters.String('test')).to.equal('"test"');
+        done();
+    });
+
+    it('formats a object', (done) => {
+        expect(Formatters.String({ a: 'test' })).to.equal('"{\\"a\\":\\"test\\"}"');
+        done();
+    });
+
+    it('formats an array', (done) => {
+        expect(Formatters.String(['a','b'])).to.equal('"a,b"');
+        done();
+    });
+});
+
+describe('Formatters - Measurement', () => {
+    it('formats a measurement', (done) => {
+        expect(Formatters.Measurement('t,e st')).to.equal('t\\,e\\ st');
+        done();
+    });
+});
 
 describe('Formatters - Flatten', () => {
     it('flatten a nested object', (done) => {
@@ -34,6 +76,16 @@ describe('Formatters - Flatten', () => {
         expect(flatData['data.e']).to.equal('\"test,array\"');
         expect(flatData['data.f']).to.equal('\"string\"');
         expect(flatData['data.g']).to.not.exist();
+        done();
+    });
+
+    it('flatten a nested object no prefix', (done) => {
+        const data = {
+            a: 'test'
+        };
+        const flatData = Formatters.Flatten(data, '');
+
+        expect(flatData.a).to.equal('\"test\"');
         done();
     });
 
@@ -76,84 +128,12 @@ describe('Formatters - Flatten', () => {
         expect(flatData.data).to.be.undefined();
         done();
     });
-});
 
-describe('Formatters - tags', () => {
-    let sandbox;
+    it('flatten null', (done) => {
+        const data = null;
+        const flatData = Formatters.Flatten(data);
 
-    beforeEach((done) => {
-        sandbox = Sinon.createSandbox();
-        sandbox.stub(Os, 'hostname').returns('test');
-        done();
-    });
-
-    afterEach((done) => {
-        sandbox.restore();
-        done();
-    });
-
-    it('formats tags with no config', (done) => {
-        const config = {};
-        const event = {
-            pid: 1
-        };
-        const values = {};
-
-        const tags = Formatters.tags(config, event, values);
-        expect(tags).to.equal({
-            host: 'test',
-            pid: 1
-        });
-
-        done();
-    });
-
-    it('formats tags with metadata', (done) => {
-        const config = {
-            metadata: {
-                a: 'test',
-                b: undefined,
-                c: null,
-                d: ''
-            }
-        };
-        const event = {
-            host: 'host',
-            pid: 1
-        };
-        const values = {};
-
-        const tags = Formatters.tags(config, event, values);
-        expect(tags).to.equal({
-            host: 'host',
-            pid: 1,
-            a: 'test'
-        });
-
-        done();
-    });
-
-    it('formats tags with field tags', (done) => {
-        const config = {
-            fieldTags: ['a', 'b', 'c']
-        };
-        const event = {
-            host: 'host',
-            pid: 1
-        };
-        const values = {
-            a: 'test',
-            b: '"test"'
-        };
-
-        const tags = Formatters.tags(config, event, values);
-        expect(tags).to.equal({
-            host: 'host',
-            pid: 1,
-            a: 'test',
-            b: 'test'
-        });
-
+        expect(flatData.data).to.be.undefined();
         done();
     });
 });
