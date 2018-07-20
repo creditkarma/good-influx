@@ -47,6 +47,11 @@ describe('Formatters - String', () => {
         expect(Formatters.String(['a','b'])).to.equal('"a,b"');
         done();
     });
+
+    it('formats a string with newlines', (done) => {
+        expect(Formatters.String('test\r\ntest')).to.equal('"test\\ntest"');
+        done();
+    });
 });
 
 describe('Formatters - Measurement', () => {
