@@ -141,4 +141,16 @@ describe('Formatters - Flatten', () => {
         expect(flatData.data).to.be.undefined();
         done();
     });
+
+    it('flatten an object with circular reference', (done) => {
+        const data = {
+            a: 'test'
+        };
+        data.self = data;
+        const flatData = Formatters.Flatten(data);
+
+        expect(flatData['data.a']).to.equal('\"test\"');
+        expect(flatData['data.self']).to.equal('\"...omitted (circular reference detected)...\"');
+        done();
+    });
 });
