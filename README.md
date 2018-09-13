@@ -166,6 +166,8 @@ Object items allow you to take things with unknown or arbitrary data and flatten
 
 *NOTE: You should still make an attempt to know what your data looks like before using this formatter. Influx only allows one type per field, and once it is set, and lines which attempt to place a different type in that field will just not be logged at all.*
 
+*NOTE: Objects with circular references are automatically truncated*
+
 - `[type]` - In this case, you must set type to `object`.
 - `[value]` - The base path to the object you want to flatten.
 - `[keyPrefix]` - Allows you to set a prefix for all values that are flattened.
