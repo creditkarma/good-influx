@@ -19,7 +19,7 @@
     "wreck": "^12.2.0"
   },
   "devDependencies": {
-    "code": "^4.0.0",
+    "code": "^5.2.1",
     "eslint": "^4.2.0",
     "eslint-config-hapi": "^11.1.0",
     "eslint-config-standard": "^10.2.1",
