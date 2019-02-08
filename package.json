@@ -16,7 +16,7 @@
     "good-udp": "4.1.x",
     "hoek": "^4.1.1",
     "lodash": "^4.17.10",
-    "wreck": "^12.2.0"
+    "wreck": "^14.1.4"
   },
   "devDependencies": {
     "code": "^4.0.0",
