@@ -99,6 +99,16 @@ describe('ops all events', () => {
         expect(formattedEvent).to.equal(getExpectedMessage([]));
         done();
     });
+    it('Undefined conurrrents reported => handles as empty object', (done) => {
+        const testEvent = JSON.parse(testOpsEventBase);
+        testEvent.load.requests = {};
+        testEvent.load.concurrents = undefined;
+        testEvent.load.responseTimes = {};
+
+        const formattedEvent = LineProtocol.format(testEvent, {}, Schemas);
+        expect(formattedEvent).to.equal(getExpectedMessage([]));
+        done();
+    });
 });
 
 describe('ops_responseTimes avg max', () => {
