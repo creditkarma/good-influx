@@ -34,7 +34,7 @@ jobs:
           command: npm install
       - run:
           name: Publish to NPM
-          command: npm run release:publish
+          command: npm publish --access public
 
 workflows:
   version: 2
