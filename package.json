@@ -6,7 +6,9 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "lab -m 5000 -t 94 -v -La code",
-    "test-cov-html": "lab -m 5000 -r html -o coverage.html -La code"
+    "test-cov-html": "lab -m 5000 -r html -o coverage.html -La code",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "author": "Frederic Hemberger (https://frederic-hemberger.de/)",
   "license": "MIT",
@@ -16,7 +18,8 @@
     "good-udp": "4.1.x",
     "hoek": "^4.1.1",
     "lodash": "^4.17.10",
-    "wreck": "^12.2.0"
+    "wreck": "^12.2.0",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "code": "^4.0.0",
@@ -31,5 +34,6 @@
   },
   "engines": {
     "node": ">=4.0.0"
-  }
+  },
+  "snyk": true
 }
