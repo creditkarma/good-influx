@@ -15,7 +15,7 @@
     "good-http": "^6.1.3",
     "good-udp": "4.1.x",
     "hoek": "^4.1.1",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.15",
     "wreck": "^12.2.0"
   },
   "devDependencies": {
