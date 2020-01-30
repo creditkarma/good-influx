@@ -17,7 +17,7 @@
     "lodash": "^4.17.10"
   },
   "devDependencies": {
-    "@types/node": "^8.10.59",
+    "@types/node": "^13.5.3",
     "code": "^4.0.0",
     "eslint": "^4.2.0",
     "eslint-config-hapi": "^11.1.0",
