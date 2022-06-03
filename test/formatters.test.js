@@ -1,7 +1,7 @@
 'use strict';
 
-const Code = require('code');
-const Lab = require('lab');
+const Code = require('@hapi/code');
+const Lab = require('@hapi/lab');
 const lab = exports.lab = Lab.script();
 
 const describe = lab.describe;
@@ -11,58 +11,49 @@ const expect = Code.expect;
 const Formatters = require('../lib/formatters');
 
 describe('Formatters - Int', () => {
-    it('formats an integer', (done) => {
+    it('formats an integer', () => {
         expect(Formatters.Int(1)).to.equal('1i');
-        done();
     });
 
-    it('formats a float', (done) => {
+    it('formats a float', () => {
         expect(Formatters.Int(1.1)).to.equal('1i');
-        done();
     });
 
-    it('formats a string', (done) => {
+    it('formats a string', () => {
         expect(Formatters.Int('1')).to.equal('1i');
-        done();
     });
 
-    it('does not format a non-number', (done) => {
+    it('does not format a non-number', () => {
         expect(Formatters.Int('a')).to.equal(undefined);
-        done();
     });
 });
 
 describe('Formatters - String', () => {
-    it('formats a basic string', (done) => {
+    it('formats a basic string', () => {
         expect(Formatters.String('test')).to.equal('"test"');
-        done();
     });
 
-    it('formats a object', (done) => {
+    it('formats a object', () => {
         expect(Formatters.String({ a: 'test' })).to.equal('"{\\"a\\":\\"test\\"}"');
-        done();
     });
 
-    it('formats an array', (done) => {
+    it('formats an array', () => {
         expect(Formatters.String(['a','b'])).to.equal('"a,b"');
-        done();
     });
 
-    it('formats a string with newlines', (done) => {
+    it('formats a string with newlines', () => {
         expect(Formatters.String('test\r\ntest')).to.equal('"test\\ntest"');
-        done();
     });
 });
 
 describe('Formatters - Measurement', () => {
-    it('formats a measurement', (done) => {
+    it('formats a measurement', () => {
         expect(Formatters.Measurement('t,e st')).to.equal('t\\,e\\ st');
-        done();
     });
 });
 
 describe('Formatters - Flatten', () => {
-    it('flatten a nested object', (done) => {
+    it('flatten a nested object', () => {
         const data = {
             a: {
                 b: 'test'
@@ -81,68 +72,60 @@ describe('Formatters - Flatten', () => {
         expect(flatData['data.e']).to.equal('\"test,array\"');
         expect(flatData['data.f']).to.equal('\"string\"');
         expect(flatData['data.g']).to.not.exist();
-        done();
     });
 
-    it('flatten a nested object no prefix', (done) => {
+    it('flatten a nested object no prefix', () => {
         const data = {
             a: 'test'
         };
         const flatData = Formatters.Flatten(data, '');
 
         expect(flatData.a).to.equal('\"test\"');
-        done();
     });
 
-    it('flatten a string', (done) => {
+    it('flatten a string', () => {
         const data = 'string';
         const flatData = Formatters.Flatten(data);
 
         expect(flatData.data).to.equal('\"string\"');
-        done();
     });
 
-    it('flatten an array', (done) => {
+    it('flatten an array', () => {
         const data = ['test', 'array'];
         const flatData = Formatters.Flatten(data);
 
         expect(flatData.data).to.equal('\"test,array\"');
-        done();
     });
 
-    it('flatten a number', (done) => {
+    it('flatten a number', () => {
         const data = 5;
         const flatData = Formatters.Flatten(data);
 
         expect(flatData.data).to.equal('5i');
-        done();
     });
 
-    it('flatten a float', (done) => {
+    it('flatten a float', () => {
         const data = 5.1;
         const flatData = Formatters.Flatten(data);
 
         expect(flatData.data).to.equal(5.1);
-        done();
     });
 
-    it('flatten undefined', (done) => {
+    it('flatten undefined', () => {
         const data = undefined;
         const flatData = Formatters.Flatten(data);
 
         expect(flatData.data).to.be.undefined();
-        done();
     });
 
-    it('flatten null', (done) => {
+    it('flatten null', () => {
         const data = null;
         const flatData = Formatters.Flatten(data);
 
         expect(flatData.data).to.be.undefined();
-        done();
     });
 
-    it('flatten an object with circular reference', (done) => {
+    it('flatten an object with circular reference', () => {
         const data = {
             a: 'test'
         };
@@ -151,10 +134,9 @@ describe('Formatters - Flatten', () => {
 
         expect(flatData['data.a']).to.equal('\"test\"');
         expect(flatData['data.self']).to.equal('\"...omitted (circular reference detected)...\"');
-        done();
     });
 
-    it('flatten a complex object with circular reference', (done) => {
+    it('flatten a complex object with circular reference', () => {
         const data = {
             a: 'test',
             b: {
@@ -168,6 +150,5 @@ describe('Formatters - Flatten', () => {
         expect(flatData['data.a']).to.equal('\"test\"');
         expect(flatData['data.b.c']).to.equal('\"test\"');
         expect(flatData['data.b.d.circular']).to.equal('\"...omitted (circular reference detected)...\"');
-        done();
     });
 });

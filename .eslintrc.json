@@ -1,6 +1,8 @@
 {
-  "extends": "eslint-config-hapi",
+  "extends": "plugin:@hapi/recommended",
   "rules": {
-    "hapi/hapi-scope-start": "off"
+    "@hapi/scope-start": "off",
+    "key-spacing": "off",
+    "padding-line-between-statements": "off"
   }
 }
