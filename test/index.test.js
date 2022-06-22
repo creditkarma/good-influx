@@ -6,8 +6,8 @@ const Stream = require('stream');
 const Http = require('http');
 const Dgram = require('dgram');
 
-const Code = require('code');
-const Lab = require('lab');
+const Code = require('@hapi/code');
+const Lab = require('@hapi/lab');
 const lab = exports.lab = Lab.script();
 
 const describe = lab.describe;
@@ -95,86 +95,94 @@ const mocks = {
 
 describe('GoodInflux', () => {
     describe('HTTP URL =>', () => {
-        it('Sends events in a stream to HTTP server', (done) => {
-            const server = mocks.getHttpServer(expectedMsgResponse, done);
-            const stream = mocks.readStream();
+        it('Sends events in a stream to HTTP server', () => {
+            return new Promise((resolve) => {
+                const server = mocks.getHttpServer(expectedMsgResponse, resolve);
+                const stream = mocks.readStream();
 
-            server.listen(0, '127.0.0.1', () => {
-                const reporter = new GoodInflux(mocks.getUri(server, 'http'), {
-                    threshold: 5
+                server.listen(0, '127.0.0.1', () => {
+                    const reporter = new GoodInflux(mocks.getUri(server, 'http'), {
+                        threshold: 5
+                    });
+                    stream.pipe(reporter);
+
+                    // Important to send 10 events. Threshold is 5, so two batches of events are sent.
+                    // Sending two batches proves that the callback is being passed properly to Wreck.request.
+                    for (let i = 0; i < 10; i += 1) {
+                        stream.push(testEvent);
+                    }
                 });
-                stream.pipe(reporter);
-
-                // Important to send 10 events. Threshold is 5, so two batches of events are sent.
-                // Sending two batches proves that the callback is being passed properly to Wreck.request.
-                for (let i = 0; i < 10; i += 1) {
-                    stream.push(testEvent);
-                }
             });
         });
     });
 
     describe('UDP URL =>', () => {
-        it('Threshold not set => Sends 5 events in a stream to UDP server', (done) => {
-            const server = mocks.getUdpServer(5, expectedMsgResponse, done);
-            const stream = mocks.readStream();
+        it('Threshold not set => Sends 5 events in a stream to UDP server', () => {
 
-            server.on('listening', () => {
-                const reporter = new GoodInflux(mocks.getUri(server, 'udp'), {});
+            return new Promise((resolve) => {
+                const server = mocks.getUdpServer(5, expectedMsgResponse, resolve);
+                const stream = mocks.readStream();
 
-                stream.pipe(reporter);
+                server.on('listening', () => {
+                    const reporter = new GoodInflux(mocks.getUri(server, 'udp'), {});
 
-                // Important to send 10 events. Threshold is 5, so two batches of events are sent.
-                // Sending two batches proves that the callback is being passed properly to this._udpClient.send.
-                for (let i = 0; i < 10; i += 1) {
-                    stream.push(testEvent);
-                }
+                    stream.pipe(reporter);
+
+                    // Important to send 10 events. Threshold is 5, so two batches of events are sent.
+                    // Sending two batches proves that the callback is being passed properly to this._udpClient.send.
+                    for (let i = 0; i < 10; i += 1) {
+                        stream.push(testEvent);
+                    }
+                });
             });
         });
 
-        it('Threshold of 3 => Sends 3 events in a stream to UDP server', (done) => {
-            const server = mocks.getUdpServer(3, expectedMsgResponse, done);
-            const stream = mocks.readStream();
+        it('Threshold of 3 => Sends 3 events in a stream to UDP server', () => {
+            return new Promise((resolve) => {
+                const server = mocks.getUdpServer(3, expectedMsgResponse, resolve);
+                const stream = mocks.readStream();
 
-            server.on('listening', () => {
-                const reporter = new GoodInflux(mocks.getUri(server, 'udp'), {
-                    threshold: 3
+                server.on('listening', () => {
+                    const reporter = new GoodInflux(mocks.getUri(server, 'udp'), {
+                        threshold: 3
+                    });
+
+                    stream.pipe(reporter);
+
+                    // Important to send 6 events. Threshold is 3, so two batches of events are sent.
+                    // Sending two batches proves that the callback is being passed properly to this._udpClient.send.
+                    for (let i = 0; i < 6; i += 1) {
+                        stream.push(testEvent);
+                    }
                 });
-
-                stream.pipe(reporter);
-
-                // Important to send 6 events. Threshold is 3, so two batches of events are sent.
-                // Sending two batches proves that the callback is being passed properly to this._udpClient.send.
-                for (let i = 0; i < 6; i += 1) {
-                    stream.push(testEvent);
-                }
             });
         });
 
-        it('Threshold of 13 => Sends 5 events in a stream to UDP server', (done) => {
-            const server = mocks.getUdpServer(5, expectedMsgResponse, done);
-            const stream = mocks.readStream();
+        it('Threshold of 13 => Sends 5 events in a stream to UDP server', () => {
+            return new Promise((resolve) => {
+                const server = mocks.getUdpServer(5, expectedMsgResponse, resolve);
+                const stream = mocks.readStream();
 
-            server.on('listening', () => {
-                const reporter = new GoodInflux(mocks.getUri(server, 'udp'), {
-                    threshold: 13
+                server.on('listening', () => {
+                    const reporter = new GoodInflux(mocks.getUri(server, 'udp'), {
+                        threshold: 13
+                    });
+
+                    stream.pipe(reporter);
+
+                    // Important to send 10 events. Threshold is 5, so two batches of events are sent.
+                    // Sending two batches proves that the callback is being passed properly to this._udpClient.send.
+                    for (let i = 0; i < 10; i += 1) {
+                        stream.push(testEvent);
+                    }
                 });
-
-                stream.pipe(reporter);
-
-                // Important to send 10 events. Threshold is 5, so two batches of events are sent.
-                // Sending two batches proves that the callback is being passed properly to this._udpClient.send.
-                for (let i = 0; i < 10; i += 1) {
-                    stream.push(testEvent);
-                }
             });
         });
     });
 
-    it('Unsupported protocol => throw error', (done) => {
+    it('Unsupported protocol => throw error', () => {
         expect(() => {
             return new GoodInflux('ftp://abcd:1234', {});
         }).to.throw(Error, 'Unsupported protocol ftp:. Supported protocols are udp, http or https');
-        done();
     });
 });

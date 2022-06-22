@@ -5,28 +5,27 @@
   "description": "InfluxDB broadcasting for Good process monitor",
   "main": "lib/index.js",
   "scripts": {
-    "test": "lab -m 5000 -t 94 -v -La code",
-    "test-cov-html": "lab -m 5000 -r html -o coverage.html -La code"
+    "test": "lab -m 5000 -t 93 -v -La @hapi/code",
+    "test-cov-html": "lab -m 5000 -r html -o coverage.html -La @hapi/code"
   },
   "author": "Frederic Hemberger (https://frederic-hemberger.de/)",
   "license": "MIT",
   "dependencies": {
-    "@hapi/hoek": "^9.0.2",
-    "@hapi/wreck": "^17.0.0",
+    "@hapi/hoek": "^10.0.0",
+    "@hapi/wreck": "^18.0.0",
     "fast-safe-stringify": "^2.0.2",
     "lodash": "^4.17.10"
   },
   "devDependencies": {
-    "@types/node": "^8.10.59",
-    "code": "^4.0.0",
-    "eslint": "^4.2.0",
-    "eslint-config-hapi": "^11.1.0",
+    "@hapi/code": "^9.0.0",
+    "@hapi/eslint-plugin": "^6.0.0",
+    "@hapi/lab": "^25.0.1",
+    "@types/node": "^16.11.34",
+    "eslint": "^8.16.0",
     "eslint-config-standard": "^10.2.1",
-    "eslint-plugin-hapi": "^4.0.0",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
-    "lab": "^14.1.0",
-    "sinon": "^5.0.10"
+    "sinon": "^14.0.0"
   },
   "engines": {
     "node": ">=8.0.0"
