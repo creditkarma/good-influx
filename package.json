@@ -1,6 +1,6 @@
 {
   "name": "@creditkarma/good-influx",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "repository": "https://github.com/creditkarma/good-influx",
   "description": "InfluxDB broadcasting for Good process monitor",
   "main": "lib/index.js",
